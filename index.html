@@ -6,11 +6,11 @@
 	</head>
 	<body>
 		<h1>AgendaCreator<sub id="betaText">beta</sub></h1>
-		<table>
+		<table id="abc">
 			<select id="daysInWeek">
-				<option selected="selected">5-day week</option>
-				<option>7-day week</option>
-				<option>Custom&hellip;</option>
+				<option value="5" selected="selected">5-day week</option>
+				<option value="7">7-day week</option>
+				<option value="custom">Custom&hellip;</option>
 			</select>
 			<br /><br />
 			
@@ -68,5 +68,7 @@
 		<br />
 		
 		<input type="button" id="generate" value="Generate output" />
+		
+		<script type="text/javascript" src="main.js"></script>
 	</body>
 </html>
