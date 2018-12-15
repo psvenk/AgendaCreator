@@ -7,6 +7,13 @@
 	<body>
 		<h1>AgendaCreator<sub id="betaText">beta</sub></h1>
 		<table>
+			<select id="daysInWeek">
+				<option selected="selected">5-day week</option>
+				<option>7-day week</option>
+				<option>Custom&hellip;</option>
+			</select>
+			<br /><br />
+			
 			<thead><tr>
 				<td></td>
 				<th>Monday</th>
@@ -17,7 +24,7 @@
 			</tr></thead>
 			<tbody>
 				<tr>
-					<td>Class1</td>
+					<td><input /></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -25,7 +32,7 @@
 					<td></td>
 				</tr>
 				<tr>
-					<td>Class2</td>
+					<td><input /></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -33,7 +40,7 @@
 					<td></td>
 				</tr>
 				<tr>
-					<td>Class3</td>
+					<td><input /></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -41,7 +48,15 @@
 					<td></td>
 				</tr>
 				<tr>
-					<td>Class4</td>
+					<td><input /></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><input type="button" id="addMore" value="Add more&hellip;" /></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -50,5 +65,8 @@
 				</tr>
 			</tbody>
 		</table>
+		<br />
+		
+		<input type="button" id="generate" value="Generate output" />
 	</body>
 </html>
