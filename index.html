@@ -6,15 +6,13 @@
 	</head>
 	<body>
 		<h1>AgendaCreator<sub id="alphaText">alpha</sub></h1>
+		<select id="daysInWeek">
+			<option value="5" selected="selected">5-day week</option>
+			<option value="7">7-day week</option>
+			<option value="custom">Custom&hellip;</option>
+		</select>
+		<br /><br />
 		<table>
-			<select id="daysInWeek">
-				<option value="5" selected="selected">5-day week</option>
-				<option value="7">7-day week</option>
-				<option value="custom">Custom&hellip;</option>
-			</select>
-			<br /><br />
-			
-			<!-- TODO automate the creation of this table -->
 			<thead><tr>
 				<td></td>
 				<th>Monday</th>
@@ -25,7 +23,7 @@
 			</tr></thead>
 			<tbody>
 				<tr>
-					<td><input /></td>
+					<td><em>Class 1</em></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -33,7 +31,7 @@
 					<td></td>
 				</tr>
 				<tr>
-					<td><input /></td>
+					<td><em>Class 2</em></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -41,7 +39,7 @@
 					<td></td>
 				</tr>
 				<tr>
-					<td><input /></td>
+					<td><em>Class 3</em></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -49,7 +47,7 @@
 					<td></td>
 				</tr>
 				<tr>
-					<td><input /></td>
+					<td><em>Class 4</em></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -57,7 +55,7 @@
 					<td></td>
 				</tr>
 				<tr>
-					<td><input type="button" id="addMore" value="Add more&hellip;" /></td>
+					<td><input type="button" id="addMore" value="Add more&hellip;" disabled="disabled" /></td>
 					<td></td>
 					<td></td>
 					<td></td>
