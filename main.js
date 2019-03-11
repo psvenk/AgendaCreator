@@ -1,5 +1,13 @@
-// This file is licensed under the MIT License.
-// TODO include a copy of the MIT License in the root directory
+/*
+Copyright 2019 psvenk
+This file is part of AgendaCreator.
+
+AgendaCreator is free/libre software: you can redistribute it and/or modify it
+under the terms of the MIT/Expat License.
+
+You should have received a copy of the MIT/Expat License
+along with AgendaCreator. If not, see <https://opensource.org/licenses/MIT>.
+*/
 
 "use strict";
 
