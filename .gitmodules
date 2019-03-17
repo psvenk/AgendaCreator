@@ -1,0 +1,4 @@
+[submodule "master"]
+	path = master
+	url = https://github.com/psvenk/AgendaCreator.git
+	branch = master
