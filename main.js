@@ -12,9 +12,9 @@ along with AgendaCreator. If not, see <https://opensource.org/licenses/MIT>.
 "use strict";
 
 function decodeEntities(encodedString) {
-  var textArea = document.createElement('textarea');
-  textArea.innerHTML = encodedString;
-  return textArea.value;
+	var textArea = document.createElement('textarea');
+	textArea.innerHTML = encodedString;
+	return textArea.value;
 }
 /* Convert HTML-encoded string to string with Unicode characters,
    e.g. "&amp;" -> "&"
@@ -106,7 +106,7 @@ document.getElementById("daysInWeek").addEventListener("click", function() {
 			break;
 		}
 		default: {
-			// TODO ask for custom days in week
+			prompt("List the days in the week that you want to include (put commas between the days, and type \"\,\" without the quotation marks to insert a literal comma): ");
 		}
 	}
 });
