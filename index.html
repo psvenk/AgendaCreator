@@ -1,1 +1,84 @@
-master/index.html
+<!--
+Copyright 2019 psvenk
+This file is part of AgendaCreator.
+
+AgendaCreator is free/libre software: you can redistribute it and/or modify it
+under the terms of the MIT/Expat License.
+
+You should have received a copy of the MIT/Expat License
+along with AgendaCreator. If not, see <https://opensource.org/licenses/MIT>.
+-->
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>AgendaCreator</title>
+		<link rel="stylesheet" type="text/css" href="style.css" />
+	</head>
+	<body>
+		<h1>AgendaCreator<sub id="alphaText">alpha</sub></h1>
+		<select id="daysInWeek">
+			<option value="5" selected="selected">5-day week</option>
+			<option value="7">7-day week</option>
+			<option value="custom">Custom&hellip;</option>
+		</select>
+		<br /><br />
+		<table>
+			<thead><tr>
+				<td></td>
+				<th>Monday</th>
+				<th>Tuesday</th>
+				<th>Wednesday</th>
+				<th>Thursday</th>
+				<th>Friday</th>
+			</tr></thead>
+			<tbody>
+				<tr>
+					<td><em>Class 1</em></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><em>Class 2</em></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><em>Class 3</em></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><em>Class 4</em></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><input type="button" id="addMore" value="Add more&hellip;" disabled="disabled" /></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+		<br />
+		
+		<input type="button" id="generate" value="Generate output" />
+		
+		<script type="text/javascript" src="main.js"></script>
+	</body>
+</html>
