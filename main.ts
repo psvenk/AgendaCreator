@@ -87,11 +87,6 @@ var table: HTMLTableElement = document.getElementsByTagName("table")[0];
 
 drawTable(daysInWeek, table);
 
-/*
-daysInWeek.forEach(function(day) {
-	console.log(day);
-});
-*/
 
 document.getElementById("daysInWeek").addEventListener("click", function() {
 	switch ((this as HTMLInputElement).value) {
@@ -106,7 +101,25 @@ document.getElementById("daysInWeek").addEventListener("click", function() {
 			break;
 		}
 		default: {
-			prompt("List the days in the week that you want to include (put commas between the days, and type \"\,\" without the quotation marks to insert a literal comma): ");
+			var daysRaw: string = prompt("List the days in the week that you want to include (put commas between the days, and type \"\\,\" without the quotation marks to insert a literal comma): ");
+			
+			var days: string[] = daysRaw.match(/(\\.|[^,])+/g);
+			// Split daysRaw into strings, with the comma as a delimiter, but does not split when it encounters "\,"
+			// https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
+			for (var i = 0; i < days.length; i++) {
+				days[i] = days[i].replace(/^\s+|\s+$/gm,"").replace(/\\,/g, ",");
+				//                Trim leading and trailing whitespace so that "a,b" and "a, b" are treated the same way
+				//                Equivalent to days[i].trim(), but with better browser support
+				//                https://www.w3schools.com/jsref/jsref_trim_string.asp
+				//
+				//                                          Replace all occurences of "\," with ","
+			}
+			
+			daysInWeek = days;
+			
+			drawTable(daysInWeek, table);
+			
+			break;
 		}
 	}
 });
