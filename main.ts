@@ -11,17 +11,39 @@ along with AgendaCreator. If not, see <https://opensource.org/licenses/MIT>.
 
 "use strict";
 
+/**
+ * Converts a string with HTML entities to a string with Unicode characters.
+ * e.g. "&amp;" -> "&"
+ * 
+ * @param encodedString The string with HTML entities
+ * 
+ * @author lucascaro at <https://stackoverflow.com/a/1395954/>
+*/
 function decodeEntities(encodedString: string): string {
 	var textArea: HTMLTextAreaElement = document.createElement('textarea');
 	textArea.innerHTML = encodedString;
 	return textArea.value;
 }
-/* Convert HTML-encoded string to string with Unicode characters,
-   e.g. "&amp;" -> "&"
-   https://stackoverflow.com/a/1395954/
-*/
 
-function drawTable(daysInWeek: string[], table: HTMLTableElement) {
+/**
+ * Draws a table with the elements of `daysInWeek` as column headers and
+ * the elements of `classes` as row headers.
+ * 
+ * @param {string[]} daysInWeek An array containing the column headers for
+ * 		the table
+ * @param {HTMLTableElement} table The table element to write to (this can
+ * 		be obtained from document.getElementById(...),
+ * 		document.getElementsByTagName(...), etc.)
+ * @param {string[]} classes An array containing the row headers for the table
+ * 
+ * precondition: `table` is in the DOM
+ * postcondition: the contents of `table` will be erased before the new
+ * 		data are added
+ * 
+ * @author psvenk
+ */
+function drawTable(daysInWeek: string[], table: HTMLTableElement,
+		classes: string[]) {
 	table.innerHTML = "";
 	// Clear table
 
@@ -85,41 +107,60 @@ var daysInWeek: string[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Frida
 var table: HTMLTableElement = document.getElementsByTagName("table")[0];
 // Get reference to <table> and store it in variable `table`
 
-drawTable(daysInWeek, table);
+drawTable(daysInWeek, table, []);
 
+var outputTable: HTMLTableElement = document.createElement("table");
+document.getElementsByTagName("body")[0].appendChild(outputTable);
 
 document.getElementById("daysInWeek").addEventListener("click", function() {
 	switch ((this as HTMLInputElement).value) {
-		case "5": {
-			daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-			drawTable(daysInWeek, table);
-			break;
-		}
-		case "7": {
-			daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-			drawTable(daysInWeek, table);
-			break;
-		}
-		default: {
-			var daysRaw: string = prompt("List the days in the week that you want to include (put commas between the days, and type \"\\,\" without the quotation marks to insert a literal comma): ");
-			
-			var days: string[] = daysRaw.match(/(\\.|[^,])+/g);
-			// Split daysRaw into strings, with the comma as a delimiter, but does not split when it encounters "\,"
-			// https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
-			for (var i = 0; i < days.length; i++) {
-				days[i] = days[i].replace(/^\s+|\s+$/gm,"").replace(/\\,/g, ",");
-				//                Trim leading and trailing whitespace so that "a,b" and "a, b" are treated the same way
-				//                Equivalent to days[i].trim(), but with better browser support
-				//                https://www.w3schools.com/jsref/jsref_trim_string.asp
-				//
-				//                                          Replace all occurences of "\," with ","
-			}
-			
-			daysInWeek = days;
-			
-			drawTable(daysInWeek, table);
-			
-			break;
-		}
+	case "5": {
+		daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
+				"Friday"];
+		drawTable(daysInWeek, table, []);
+		break;
 	}
+	case "7": {
+		daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
+				"Friday", "Saturday", "Sunday"];
+		drawTable(daysInWeek, table, []);
+		break;
+	}
+	default: {
+		var daysRaw: string = prompt("List the days in the week that " +
+				"you want to include (put commas between the days, and " +
+				"type \"\\,\" without the quotation marks to insert a " +
+				"literal comma): ");
+		
+		var days: string[] = daysRaw.match(/(\\.|[^,])+/g);
+		/*
+			Split daysRaw into strings, with the comma as a delimiter,
+			but does not split when "\," is encountered
+			https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
+		*/
+		for (var i = 0; i < days.length; i++) {
+			days[i] = days[i].replace(/^\s+|\s+$/gm,"")
+						.replace(/\\,/g, ",");
+			/*
+			First line: Trim leading and trailing whitespace so that
+			"a,b" and "a, b" are treated the same way
+			
+			Equivalent to days[i].trim(), but with better browser support
+			https://www.w3schools.com/jsref/jsref_trim_string.asp
+			
+			Second line: Replace all occurences of "\," with ","
+			*/
+		}
+		
+		daysInWeek = days;
+		
+		drawTable(daysInWeek, table, []);
+		
+		break;
+	}
+	}
+});
+
+document.getElementById("generate").addEventListener("click", function() {
+	
 });
