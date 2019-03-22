@@ -9,8 +9,7 @@ You should have received a copy of the MIT/Expat License
 along with AgendaCreator. If not, see <https://opensource.org/licenses/MIT>.
 */
 
-/* TODO create a makefile for compiling TypeScript and add BabelJS for better
-   browser compatibility */
+// TODO use Babel (JS preprocessor)
 
 "use strict";
 
