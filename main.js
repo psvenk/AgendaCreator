@@ -8,6 +8,8 @@ under the terms of the MIT/Expat License.
 You should have received a copy of the MIT/Expat License
 along with AgendaCreator. If not, see <https://opensource.org/licenses/MIT>.
 */
+/* TODO create a makefile for compiling TypeScript and add BabelJS for better
+   browser compatibility */
 "use strict";
 /**
  * Converts a string with HTML entities to a string with Unicode characters.
@@ -61,39 +63,57 @@ function drawTable(daysInWeek, table, classes) {
         })();
     // Populate header
     (function () {
-        var maxRows = 5;
-        for (var row = 1; row <= maxRows; row++) {
-            var tr = document.createElement("tr");
-            tbody.appendChild(tr);
-            // Create a row and add it to the <tbody>
-            if (row != maxRows) {
-                tr.appendChild(document.createElement("td")).appendChild(document.createElement("input"));
-                // Add a cell with an <input> in the leftmost position
-                // TODO store the <input>s in an array so that their values can be used
+        if (typeof classes !== "undefined" && classes.length > 0)
+            /* The array is defined and has at least one element
+            https://stackoverflow.com/a/11743671/
+            */
+            for (var row = 1; row <= classes.length; row++) {
+                var tr = document.createElement("tr");
+                tbody.appendChild(tr);
+                // Create a row and add it to the <tbody>
+                tr.appendChild(document.createElement("td")).innerHTML =
+                    classes[row - 1];
+                // Add the name of the current class in the leftmost position
+                for (var col = 1; col <= daysInWeek.length; col++) {
+                    tr.appendChild(document.createElement("td"));
+                }
+                // Create remaining cells
             }
-            else {
-                // If last row
-                var button = document.createElement("input");
-                button.type = "button";
-                button.value = decodeEntities("Add more&hellip;");
-                button.id = "addMore";
-                /* Create an <input> and set it to be a button with the text
-                   "Add more..." */
-                tr.appendChild(document.createElement("td")).appendChild(button);
-                // Add the button in the leftmost position
+        else
+            for (var row = 1, maxRows = 5; row <= maxRows; row++) {
+                var tr = document.createElement("tr");
+                tbody.appendChild(tr);
+                // Create a row and add it to the <tbody>
+                if (row != maxRows) {
+                    tr.appendChild(document.createElement("td"))
+                        .appendChild(document.createElement("input"));
+                    // Add a cell with an <input> in the leftmost position
+                }
+                else {
+                    // If last row
+                    var button = document.createElement("input");
+                    button.type = "button";
+                    button.value = decodeEntities("Add more&hellip;");
+                    button.id = "addMore";
+                    /* Create an <input> and set it to be a button with the text
+                       "Add more..." */
+                    tr.appendChild(document.createElement("td"))
+                        .appendChild(button);
+                    // Add the button in the leftmost position
+                }
+                for (var col = 1; col <= daysInWeek.length; col++) {
+                    tr.appendChild(document.createElement("td"));
+                }
+                // Create remaining cells
             }
-            for (var col = 1; col <= daysInWeek.length; col++) {
-                tr.appendChild(document.createElement("td"));
-            }
-            // Create remaining cells
-        }
     })();
     // Create more rows and populate them
 }
-var daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-var table = document.getElementsByTagName("table")[0];
+var daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
+    "Friday"];
+var inputTable = document.getElementsByTagName("table")[0];
 // Get reference to <table> and store it in variable `table`
-drawTable(daysInWeek, table, []);
+drawTable(daysInWeek, inputTable, []);
 var outputTable = document.createElement("table");
 document.getElementsByTagName("body")[0].appendChild(outputTable);
 document.getElementById("daysInWeek").addEventListener("click", function () {
@@ -101,13 +121,13 @@ document.getElementById("daysInWeek").addEventListener("click", function () {
         case "5": {
             daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
                 "Friday"];
-            drawTable(daysInWeek, table, []);
+            drawTable(daysInWeek, inputTable, []);
             break;
         }
         case "7": {
             daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
                 "Friday", "Saturday", "Sunday"];
-            drawTable(daysInWeek, table, []);
+            drawTable(daysInWeek, inputTable, []);
             break;
         }
         default: {
@@ -135,10 +155,28 @@ document.getElementById("daysInWeek").addEventListener("click", function () {
                 */
             }
             daysInWeek = days;
-            drawTable(daysInWeek, table, []);
+            drawTable(daysInWeek, inputTable, []);
             break;
         }
     }
 });
 document.getElementById("generate").addEventListener("click", function () {
+    var classes = new Array();
+    var rows = inputTable.getElementsByTagName("tr");
+    for (var i = 1; i < rows.length - 1; i++) {
+        var input = rows[i].getElementsByTagName("td")[0]
+            .getElementsByTagName("input")[0];
+        classes.push(input.value);
+    }
+    for (var i = 0; i < classes.length; i++) {
+        if (typeof classes[i] === "undefined" || classes[i] === "") {
+            classes.splice(i, 1);
+            i--;
+        }
+        /* If an element in `classes` is blank or undefined, remove it and
+        go back in case there are consecutive blank elements */
+    }
+    // i is initially 1 so that the header row is ignored, and stops
+    // at the penultimate row so that the "Add more..." button is ignored.
+    drawTable(daysInWeek, outputTable, classes);
 });
