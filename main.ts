@@ -45,7 +45,7 @@ function decodeEntities(encodedString: string): string {
  * @author psvenk
  */
 function drawTable(daysInWeek: string[], table: HTMLTableElement,
-		classes: string[]) {
+		classes: string[] = [], numClasses: number = 4): void {
 	table.innerHTML = "";
 	// Clear table
 	
@@ -71,7 +71,7 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 		theadTr.appendChild(currentTh);
 	})();
 	// Populate header
-	(function() {
+	(function(): void {
 		
 		if (typeof classes !== "undefined" && classes.length > 0)
 		/* The array is defined and has at least one element
@@ -93,7 +93,8 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 		}
 		
 		else
-		for (var row: number = 1, maxRows: number = 5; row <= maxRows; row++) {
+		for (var row: number = 1, maxRows: number = numClasses + 1;
+				row <= maxRows; row++) {
 			var tr: HTMLTableRowElement = document.createElement("tr");
 			tbody.appendChild(tr);
 			// Create a row and add it to the <tbody>
@@ -115,6 +116,9 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 				tr.appendChild(document.createElement("td"))
 						.appendChild(button);
 				// Add the button in the leftmost position
+				
+				button.addEventListener("click", addMoreEventListener);
+				// Add event listener for "Add more..." button
 			}
 			
 			for (var col: number = 1; col <= daysInWeek.length; col++) {
@@ -132,23 +136,24 @@ var daysInWeek: string[] = ["Monday", "Tuesday", "Wednesday", "Thursday",
 var inputTable: HTMLTableElement = document.getElementsByTagName("table")[0];
 // Get reference to <table> and store it in variable `table`
 
-drawTable(daysInWeek, inputTable, []);
+drawTable(daysInWeek, inputTable);
 
 var outputTable: HTMLTableElement = document.createElement("table");
 document.getElementsByTagName("body")[0].appendChild(outputTable);
 
-document.getElementById("daysInWeek").addEventListener("click", function() {
+document.getElementById("daysInWeek").addEventListener("click",
+		function(): void {
 	switch ((this as HTMLInputElement).value) {
 	case "5": {
 		daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
 				"Friday"];
-		drawTable(daysInWeek, inputTable, []);
+		drawTable(daysInWeek, inputTable);
 		break;
 	}
 	case "7": {
 		daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
 				"Friday", "Saturday", "Sunday"];
-		drawTable(daysInWeek, inputTable, []);
+		drawTable(daysInWeek, inputTable);
 		break;
 	}
 	default: {
@@ -179,14 +184,15 @@ document.getElementById("daysInWeek").addEventListener("click", function() {
 		
 		daysInWeek = days;
 		
-		drawTable(daysInWeek, inputTable, []);
+		drawTable(daysInWeek, inputTable);
 		
 		break;
 	}
 	}
 });
 
-document.getElementById("generate").addEventListener("click", function() {
+document.getElementById("generate").addEventListener("click",
+		function(): void {
 	var classes: string[] = new Array();
 	var rows: HTMLCollectionOf<HTMLTableRowElement> =
 			inputTable.getElementsByTagName("tr");
@@ -212,3 +218,15 @@ document.getElementById("generate").addEventListener("click", function() {
 	else
 		outputTable.innerHTML = "";
 });
+
+function addMoreEventListener(): void {
+	var numRowsToAdd: number = parseInt(
+			prompt("How many rows would you like to add?"));
+	var numRowsExisting: number =
+			inputTable.getElementsByTagName("tr").length - 2;
+	/* Get number of rows already in table, subtract two to exclude header row
+	   and "Add more..." button */
+	var totalRows: number = numRowsExisting + numRowsToAdd;
+	
+	drawTable(daysInWeek, inputTable, [], totalRows);
+}
