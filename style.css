@@ -13,6 +13,11 @@ along with AgendaCreator. If not, see <https://opensource.org/licenses/MIT>.
 	color: red;
 }
 
+.build {
+	font-weight: normal;
+	font-style: italic;
+}
+
 table, th, td {
 	border: 1px solid black;
 	border-collapse: collapse;

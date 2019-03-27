@@ -1,1 +1,2 @@
-compile.sh
+Makefile
+make_when_saved.sh
