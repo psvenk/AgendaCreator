@@ -195,6 +195,8 @@ document.getElementById("generate").addEventListener("click", function() {
 				.getElementsByTagName("input")[0];
 		classes.push(input.value);
 	}
+	// i is initially 1 so that the header row is ignored, and stops
+	// at the penultimate row so that the "Add more..." button is ignored.
 	
 	for (var i = 0; i < classes.length; i++) {
 		if (typeof classes[i] === "undefined" || classes[i] === "") {
@@ -205,7 +207,8 @@ document.getElementById("generate").addEventListener("click", function() {
 		go back in case there are consecutive blank elements */
 	}
 	
-	// i is initially 1 so that the header row is ignored, and stops
-	// at the penultimate row so that the "Add more..." button is ignored.
-	drawTable(daysInWeek, outputTable, classes);
+	if (typeof classes !== "undefined" && classes.length > 0)
+		drawTable(daysInWeek, outputTable, classes);
+	else
+		outputTable.innerHTML = "";
 });
