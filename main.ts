@@ -9,15 +9,13 @@ You should have received a copy of the MIT/Expat License
 along with AgendaCreator. If not, see <https://opensource.org/licenses/MIT>.
 */
 
-// TODO use Babel (JS preprocessor)
-
 "use strict";
 
 /**
  * Converts a string with HTML entities to a string with Unicode characters.
  * e.g. "&amp;" -> "&"
  * 
- * @param encodedString The string with HTML entities
+ * @param encodedString: The string with HTML entities
  * 
  * @author lucascaro at <https://stackoverflow.com/a/1395954/>
 */
@@ -27,25 +25,37 @@ function decodeEntities(encodedString: string): string {
 	return textArea.value;
 }
 
+var InputOrOutput = {"input": true, "output": false};
+
 /**
  * Draws a table with the elements of `daysInWeek` as column headers and
  * the elements of `classes` as row headers.
  * 
- * @param {string[]} daysInWeek An array containing the column headers for
+ * @param {string[]} daysInWeek: An array containing the column headers for
  * 		the table
- * @param {HTMLTableElement} table The table element to write to (this can
+ * @param {HTMLTableElement} table: The table element to write to (this can
  * 		be obtained from document.getElementById(...),
  * 		document.getElementsByTagName(...), etc.)
- * @param {string[]} classes An array containing the row headers for the table
+ * @param {boolean} inputOrOutput: Either InputOrOutput.input or
+ * 		InputOrOutput.output, depending on whether `table` is the input table
+ * 		or the output table.
+ * @param {string[]} classes: An array containing the row headers for the table,
+ * 		if inputOrOutput == InputOrOutput.output, or the default values of the
+ * 		<input> tags in the table, if inputOrOutput == InputOrOutput.input.
+ * @param {number} numClasses: The number of <input>s to include, if
+ * 		inputOrOutput == InputOrOutput.input.
  * 
  * precondition: `table` is in the DOM
+ * 
  * postcondition: the contents of `table` will be erased before the new
  * 		data are added
  * 
  * @author psvenk
  */
 function drawTable(daysInWeek: string[], table: HTMLTableElement,
-		classes: string[]) {
+		inputOrOutput: boolean, classes: string[] = [],
+		numClasses: number = 4): void {
+	
 	table.innerHTML = "";
 	// Clear table
 	
@@ -71,12 +81,9 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 		theadTr.appendChild(currentTh);
 	})();
 	// Populate header
-	(function() {
+	(function(): void {
 		
-		if (typeof classes !== "undefined" && classes.length > 0)
-		/* The array is defined and has at least one element
-		https://stackoverflow.com/a/11743671/
-		*/
+		if (inputOrOutput === InputOrOutput.output)
 		for (var row: number = 1; row <= classes.length; row++) {
 			var tr: HTMLTableRowElement = document.createElement("tr");
 			tbody.appendChild(tr);
@@ -92,15 +99,20 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 			// Create remaining cells
 		}
 		
-		else
-		for (var row: number = 1, maxRows: number = 5; row <= maxRows; row++) {
+		else // if (inputOrOutput === InputOrOutput.input)
+		for (var row: number = 1, maxRows: number = numClasses + 1;
+				row <= maxRows; row++) {
 			var tr: HTMLTableRowElement = document.createElement("tr");
 			tbody.appendChild(tr);
 			// Create a row and add it to the <tbody>
 			
 			if (row != maxRows) {
-				tr.appendChild(document.createElement("td"))
-						.appendChild(document.createElement("input"));
+				var input: HTMLInputElement = document.createElement("input");
+				
+				if (typeof classes[row - 1] !== "undefined" && classes.length > 0)
+					input.value = classes[row - 1];
+				
+				tr.appendChild(document.createElement("td")).appendChild(input);
 				// Add a cell with an <input> in the leftmost position
 			} else {
 				// If last row
@@ -115,6 +127,9 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 				tr.appendChild(document.createElement("td"))
 						.appendChild(button);
 				// Add the button in the leftmost position
+				
+				button.addEventListener("click", addMoreEventListener);
+				// Add event listener for "Add more..." button
 			}
 			
 			for (var col: number = 1; col <= daysInWeek.length; col++) {
@@ -132,23 +147,28 @@ var daysInWeek: string[] = ["Monday", "Tuesday", "Wednesday", "Thursday",
 var inputTable: HTMLTableElement = document.getElementsByTagName("table")[0];
 // Get reference to <table> and store it in variable `table`
 
-drawTable(daysInWeek, inputTable, []);
+drawTable(daysInWeek, inputTable, InputOrOutput.input);
 
 var outputTable: HTMLTableElement = document.createElement("table");
 document.getElementsByTagName("body")[0].appendChild(outputTable);
 
-document.getElementById("daysInWeek").addEventListener("click", function() {
+document.getElementById("daysInWeek").addEventListener("click",
+		function(): void {
 	switch ((this as HTMLInputElement).value) {
 	case "5": {
 		daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
 				"Friday"];
-		drawTable(daysInWeek, inputTable, []);
+		drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(),
+				inputTable.getElementsByTagName("tr").length - 2);
+				/* Get number of rows already in table, subtract two to exclude
+				   header row and "Add more..." button */
 		break;
 	}
 	case "7": {
 		daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
 				"Friday", "Saturday", "Sunday"];
-		drawTable(daysInWeek, inputTable, []);
+		drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(),
+				inputTable.getElementsByTagName("tr").length - 2);
 		break;
 	}
 	default: {
@@ -179,14 +199,24 @@ document.getElementById("daysInWeek").addEventListener("click", function() {
 		
 		daysInWeek = days;
 		
-		drawTable(daysInWeek, inputTable, []);
+		drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(),
+				inputTable.getElementsByTagName("tr").length - 2);
 		
 		break;
 	}
 	}
 });
 
-document.getElementById("generate").addEventListener("click", function() {
+/**
+ * Reads the names of classes entered into the <input> fields in the input
+ * table, and returns them in an array.
+ * 
+ * @return {string[]} An array consisting of all of the values in the input
+ * 		fields
+ * 
+ * @author psvenk
+ */
+function readClasses(): string[] {
 	var classes: string[] = new Array();
 	var rows: HTMLCollectionOf<HTMLTableRowElement> =
 			inputTable.getElementsByTagName("tr");
@@ -195,17 +225,54 @@ document.getElementById("generate").addEventListener("click", function() {
 				.getElementsByTagName("input")[0];
 		classes.push(input.value);
 	}
-	
-	for (var i = 0; i < classes.length; i++) {
-		if (typeof classes[i] === "undefined" || classes[i] === "") {
-			classes.splice(i, 1);
-			i--;
-		}
-		/* If an element in `classes` is blank or undefined, remove it and
-		go back in case there are consecutive blank elements */
-	}
-	
 	// i is initially 1 so that the header row is ignored, and stops
 	// at the penultimate row so that the "Add more..." button is ignored.
-	drawTable(daysInWeek, outputTable, classes);
+	
+	return classes;
+}
+
+/**
+ * Removes all blank and undefined elements from a string array. This function
+ * acts on the array passed as an argument, so clone your array if you would
+ * like to keep the original.
+ * 
+ * @param {string[]} arr: The array to modify
+ * @return {string[]} The modified array
+ * 
+ * @author psvenk
+ */
+function trimArray(arr: string[]): string[] {
+	for (var i = 0; i < arr.length; i++) {
+		if (typeof arr[i] === "undefined" || arr[i] === "") {
+			arr.splice(i, 1);
+			i--;
+		}
+		/* If an element in array is blank or undefined, remove it and
+		go back in case there are consecutive blank elements */
+	}
+	return arr;
+}
+
+document.getElementById("generate").addEventListener("click",
+		function(): void {
+	var classes: string[] = readClasses();
+	trimArray(classes);
+	
+	if (typeof classes !== "undefined" && classes.length > 0)
+		drawTable(daysInWeek, outputTable, InputOrOutput.output, classes);
+	else
+		outputTable.innerHTML = "";
 });
+
+function addMoreEventListener(): void {
+	var numRowsToAdd: number = parseInt(
+			prompt("How many rows would you like to add?"));
+	var numRowsExisting: number =
+			inputTable.getElementsByTagName("tr").length - 2;
+	/* Get number of rows already in table, subtract two to exclude header row
+	   and "Add more..." button */
+	var totalRows: number = numRowsExisting + numRowsToAdd;
+	
+	drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(),
+			totalRows);
+}
