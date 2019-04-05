@@ -7,10 +7,7 @@ and/or modify it under the terms of the Apache License, Version 2.0 or any
 later version, or the Mozilla Public License, Version 2.0 or any later version.
 See file `COPYING` for more details.
 
-This file is also available under the MIT/Expat License. See file `COPYING` for
-more details.
-
-SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+ OR MIT
+SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
 */
 
 "use strict";
@@ -132,7 +129,18 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 						.appendChild(button);
 				// Add the button in the leftmost position
 				
-				button.addEventListener("click", addMoreEventListener);
+				button.addEventListener("click", function(): void {
+					var numRowsToAdd: number = parseInt(
+						prompt("How many rows would you like to add?"));
+					var numRowsExisting: number =
+						inputTable.getElementsByTagName("tr").length - 2;
+					/* Get number of rows already in table, subtract two to
+					   exclude header row and "Add more..." button */
+					var totalRows: number = numRowsExisting + numRowsToAdd;
+					
+					drawTable(daysInWeek, inputTable, InputOrOutput.input,
+							  readClasses(), totalRows);
+				});
 				// Add event listener for "Add more..." button
 			}
 			
@@ -148,13 +156,14 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 var daysInWeek: string[] = ["Monday", "Tuesday", "Wednesday", "Thursday",
 		"Friday"];
 
-var inputTable: HTMLTableElement = document.getElementsByTagName("table")[0];
+var inputTable: HTMLTableElement = document.getElementById("inputTable") as
+		HTMLTableElement;
 // Get reference to <table> and store it in variable `table`
 
 drawTable(daysInWeek, inputTable, InputOrOutput.input);
 
-var outputTable: HTMLTableElement = document.createElement("table");
-document.getElementsByTagName("body")[0].appendChild(outputTable);
+var outputTable: HTMLTableElement = document.getElementById("outputTable") as
+		HTMLTableElement;
 
 document.getElementById("daysInWeek").addEventListener("click",
 		function(): void {
@@ -267,16 +276,3 @@ document.getElementById("generate").addEventListener("click",
 	else
 		outputTable.innerHTML = "";
 });
-
-function addMoreEventListener(): void {
-	var numRowsToAdd: number = parseInt(
-			prompt("How many rows would you like to add?"));
-	var numRowsExisting: number =
-			inputTable.getElementsByTagName("tr").length - 2;
-	/* Get number of rows already in table, subtract two to exclude header row
-	   and "Add more..." button */
-	var totalRows: number = numRowsExisting + numRowsToAdd;
-	
-	drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(),
-			totalRows);
-}
