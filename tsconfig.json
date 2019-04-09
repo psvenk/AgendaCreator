@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"target": "es3",
+		"rootDir": "src/",
+		"outDir": "dist/",
+		"noImplicitAny": true,
+		"noImplicitThis": true
+	},
+	"files": [
+		"src/main.ts"
+	]
+}

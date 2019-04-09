@@ -1,10 +1,10 @@
-########## Dependencies ##########
-# TypeScript: npm install typescript
-
 default: build
 
-build: main.ts
-	tsc main.ts
+install:
+	npm install
 
-clean:
-	rm main.js
+build:
+	npm run build
+
+tsc:
+	npm run build:tsc

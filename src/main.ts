@@ -16,17 +16,29 @@ SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
  * Converts a string with HTML entities to a string with Unicode characters.
  * e.g. "&amp;" -> "&"
  * 
- * @param encodedString: The string with HTML entities
+ * @param {string} encodedString: The string with HTML entities
  * 
- * @author lucascaro at <https://stackoverflow.com/a/1395954/>
-*/
+ * @author Mark Amery at <https://stackoverflow.com/a/1395954/>
+ * 		modified slightly by psvenk to include TypeScript type annotations
+ * @license CC-BY-SA-3.0
+ * 
+ * License note: See <https://legalict.com/?p=1209> and
+ * <https://meta.stackexchange.com/a/12528> for explanations of how it is known
+ * that this code is under this license. I believe that the inclusion of this
+ * short snippet does not make AgendaCreator a derivative work of this snippet
+ * of code, so I feel that I am within my legal rights to include this
+ * CC-BY-SA-licensed snippet in my Apache- and MPL-licensed code. However, if
+ * you take this code, modify it to make it something more than a short snippet,
+ * and use it in your own project, it will carry the CC-BY-SA 3.0 license as it
+ * will be a derivative work of this code snippet.
+ */
 function decodeEntities(encodedString: string): string {
 	var textArea: HTMLTextAreaElement = document.createElement('textarea');
 	textArea.innerHTML = encodedString;
 	return textArea.value;
 }
 
-var InputOrOutput = {"input": true, "output": false};
+var InputOrOutput: any = {"input": true, "output": false};
 
 /**
  * Draws a table with the elements of `daysInWeek` as column headers and
@@ -52,6 +64,7 @@ var InputOrOutput = {"input": true, "output": false};
  * 		data are added
  * 
  * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
 function drawTable(daysInWeek: string[], table: HTMLTableElement,
 		inputOrOutput: boolean, classes: string[] = [],
@@ -78,7 +91,7 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 
 		var currentTh: HTMLTableHeaderCellElement =
 				document.createElement("th");
-		currentTh.innerHTML = daysInWeek[col - 1];
+		currentTh.textContent = daysInWeek[col - 1];
 		theadTr.appendChild(currentTh);
 	})();
 	// Populate header
@@ -90,7 +103,7 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 			tbody.appendChild(tr);
 			// Create a row and add it to the <tbody>
 			
-			tr.appendChild(document.createElement("td")).innerHTML =
+			tr.appendChild(document.createElement("td")).textContent =
 					classes[row - 1];
 			// Add the name of the current class in the leftmost position
 			
@@ -110,7 +123,8 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 			if (row != maxRows) {
 				var input: HTMLInputElement = document.createElement("input");
 				
-				if (typeof classes[row - 1] !== "undefined" && classes.length > 0)
+				if (typeof classes[row - 1] !== "undefined" &&
+						classes.length > 0)
 					input.value = classes[row - 1];
 				
 				tr.appendChild(document.createElement("td")).appendChild(input);
@@ -165,6 +179,12 @@ drawTable(daysInWeek, inputTable, InputOrOutput.input);
 var outputTable: HTMLTableElement = document.getElementById("outputTable") as
 		HTMLTableElement;
 
+/**
+ * This is the event listener for the dropdown to choose the days in the week.
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ */
 document.getElementById("daysInWeek").addEventListener("click",
 		function(): void {
 	switch ((this as HTMLInputElement).value) {
@@ -228,6 +248,7 @@ document.getElementById("daysInWeek").addEventListener("click",
  * 		fields
  * 
  * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
 function readClasses(): string[] {
 	var classes: string[] = new Array();
@@ -253,6 +274,7 @@ function readClasses(): string[] {
  * @return {string[]} The modified array
  * 
  * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
 function trimArray(arr: string[]): string[] {
 	for (var i = 0; i < arr.length; i++) {
@@ -266,6 +288,12 @@ function trimArray(arr: string[]): string[] {
 	return arr;
 }
 
+/**
+ * This is the event listener for the "Generate" button.
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ */
 document.getElementById("generate").addEventListener("click",
 		function(): void {
 	var classes: string[] = readClasses();
@@ -275,4 +303,29 @@ document.getElementById("generate").addEventListener("click",
 		drawTable(daysInWeek, outputTable, InputOrOutput.output, classes);
 	else
 		outputTable.innerHTML = "";
+});
+
+// TODO: document this method
+/**
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+function serialize(): string {
+	var obj: any = {};
+	obj.classes = readClasses();
+	obj.daysInWeek = daysInWeek;
+	return JSON.stringify(obj); // TODO: Add JSON polyfill
+}
+
+/**
+ * This is the event listener for the "Serialize" button.
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+document.getElementById("serialize").addEventListener("click",
+		function(): void {
+	var blob = new Blob([serialize()],
+			{type: "text/plain;charset=utf-8"});
+	saveAs(blob, "agenda.json");
 });

@@ -19,8 +19,9 @@ license, you may use AgendaCreator under the MIT/Expat license if you wish.
 You should have received copies of the Apache License, version 2.0, the
 Mozilla Public License, version 2.0, and the MIT/Expat license along with
 AgendaCreator. These should be in the files LICENSE_APACHE, LICENSE_MPL, and
-LICENSE_MIT respectively. If you did not receive a copy of any one or more of
-these licenses, see <https://www.apache.org/licenses/LICENSE-2.0>,
+LICENSE_MIT respectively, in the "licenses" folder. If you did not receive a
+copy of any one or more of these licenses, see
+<https://www.apache.org/licenses/LICENSE-2.0>,
 <https://www.mozilla.org/en-US/MPL/2.0/>, and/or
 <https://spdx.org/licenses/MIT.html> respectively. You may use a later version
 of the Apache License, published by the Apache Software Foundation, or the
