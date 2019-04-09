@@ -1,0 +1,46 @@
+This file is part of AgendaCreator, which is copyright 2018-2019 psvenk and
+other AgendaCreator contributors.
+
+This file (but no other part of AgendaCreator, unless specifically stated)
+may be used under CC0-1.0. You should be able to find this license in the
+file LICENSE_CC0, or at <https://creativecommons.org/publicdomain/zero/1.0/>.
+
+AgendaCreator is free/libre and open-source software.
+
+AgendaCreator is dual-licensed under the Apache License, version 2.0 or any
+later version, and the Mozilla Public License, version 2.0 or any later
+version, but some files (or some parts of files) may also be available under
+the MIT/Expat license. This means that you may choose between the Apache
+License, version 2.0 or any later version, or the Mozilla Public License,
+version 2.0 or any later version, if you use AgendaCreator. If all of the
+parts of AgendaCreator that you use are available under the MIT/Expat
+license, you may use AgendaCreator under the MIT/Expat license if you wish.
+
+You should have received copies of the Apache License, version 2.0, the
+Mozilla Public License, version 2.0, and the MIT/Expat license along with
+AgendaCreator. These should be in the files LICENSE_APACHE, LICENSE_MPL, and
+LICENSE_MIT respectively, in the "licenses" folder. If you did not receive a
+copy of any one or more of these licenses, see
+<https://www.apache.org/licenses/LICENSE-2.0>,
+<https://www.mozilla.org/en-US/MPL/2.0/>, and/or
+<https://spdx.org/licenses/MIT.html> respectively. You may use a later version
+of the Apache License, published by the Apache Software Foundation, or the
+Mozilla Public License, published by Mozilla, if you wish.
+
+Unless otherwise stated, all parts of AgendaCreator may be used under the
+license of AgendaCreator.
+
+To determine the license of a particular file or a section of a file, find a
+comment near the beginning of that section (such as a comment near the
+beginning of a function or method), beginning with the text "SPDX-License-
+Identifier". This should tell you the license for that section of the file.
+If there is no license information for the function, check for a license at
+the beginning of the file. If there is still no license at the beginning of
+the file, open an issue on GitHub stating that there is no license for that
+file.
+
+SPDX License Identifier for this file only:
+SPDX-License-Identifier: CC0-1.0 OR Apache-2.0+ OR MPL-2.0+
+
+SPDX License Identifier for AgendaCreator:
+SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+

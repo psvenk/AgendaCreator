@@ -2,21 +2,34 @@
 Copyright 2019 psvenk
 This file is part of AgendaCreator.
 
-AgendaCreator is free/libre software: you can redistribute it and/or modify it
-under the terms of the MIT/Expat License.
+AgendaCreator is free/libre and open-source software: you can redistribute it
+and/or modify it under the terms of the Apache License, Version 2.0 or any
+later version, or the Mozilla Public License, Version 2.0 or any later version.
+See file `COPYING` for more details.
 
-You should have received a copy of the MIT/Expat License
-along with AgendaCreator. If not, see <https://opensource.org/licenses/MIT>.
+SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
 */
 "use strict";
 /**
  * Converts a string with HTML entities to a string with Unicode characters.
  * e.g. "&amp;" -> "&"
  *
- * @param encodedString: The string with HTML entities
+ * @param {string} encodedString: The string with HTML entities
  *
- * @author lucascaro at <https://stackoverflow.com/a/1395954/>
-*/
+ * @author Mark Amery at <https://stackoverflow.com/a/1395954/>
+ * 		modified slightly by psvenk to include TypeScript type annotations
+ * @license CC-BY-SA-3.0
+ *
+ * License note: See <https://legalict.com/?p=1209> and
+ * <https://meta.stackexchange.com/a/12528> for explanations of how it is known
+ * that this code is under this license. I believe that the inclusion of this
+ * short snippet does not make AgendaCreator a derivative work of this snippet
+ * of code, so I feel that I am within my legal rights to include this
+ * CC-BY-SA-licensed snippet in my Apache- and MPL-licensed code. However, if
+ * you take this code, modify it to make it something more than a short snippet,
+ * and use it in your own project, it will carry the CC-BY-SA 3.0 license as it
+ * will be a derivative work of this code snippet.
+ */
 function decodeEntities(encodedString) {
     var textArea = document.createElement('textarea');
     textArea.innerHTML = encodedString;
@@ -47,6 +60,7 @@ var InputOrOutput = { "input": true, "output": false };
  * 		data are added
  *
  * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
 function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
     if (classes === void 0) { classes = []; }
@@ -67,7 +81,7 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
             /* IIFE (http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
                to limit scope */
             var currentTh = document.createElement("th");
-            currentTh.innerHTML = daysInWeek[col - 1];
+            currentTh.textContent = daysInWeek[col - 1];
             theadTr.appendChild(currentTh);
         })();
     // Populate header
@@ -77,7 +91,7 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
                 var tr = document.createElement("tr");
                 tbody.appendChild(tr);
                 // Create a row and add it to the <tbody>
-                tr.appendChild(document.createElement("td")).innerHTML =
+                tr.appendChild(document.createElement("td")).textContent =
                     classes[row - 1];
                 // Add the name of the current class in the leftmost position
                 for (var col = 1; col <= daysInWeek.length; col++) {
@@ -92,7 +106,8 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
                 // Create a row and add it to the <tbody>
                 if (row != maxRows) {
                     var input = document.createElement("input");
-                    if (typeof classes[row - 1] !== "undefined" && classes.length > 0)
+                    if (typeof classes[row - 1] !== "undefined" &&
+                        classes.length > 0)
                         input.value = classes[row - 1];
                     tr.appendChild(document.createElement("td")).appendChild(input);
                     // Add a cell with an <input> in the leftmost position
@@ -108,7 +123,14 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
                     tr.appendChild(document.createElement("td"))
                         .appendChild(button);
                     // Add the button in the leftmost position
-                    button.addEventListener("click", addMoreEventListener);
+                    button.addEventListener("click", function () {
+                        var numRowsToAdd = parseInt(prompt("How many rows would you like to add?"));
+                        var numRowsExisting = inputTable.getElementsByTagName("tr").length - 2;
+                        /* Get number of rows already in table, subtract two to
+                           exclude header row and "Add more..." button */
+                        var totalRows = numRowsExisting + numRowsToAdd;
+                        drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), totalRows);
+                    });
                     // Add event listener for "Add more..." button
                 }
                 for (var col = 1; col <= daysInWeek.length; col++) {
@@ -121,11 +143,16 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
 }
 var daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
     "Friday"];
-var inputTable = document.getElementsByTagName("table")[0];
+var inputTable = document.getElementById("inputTable");
 // Get reference to <table> and store it in variable `table`
 drawTable(daysInWeek, inputTable, InputOrOutput.input);
-var outputTable = document.createElement("table");
-document.getElementsByTagName("body")[0].appendChild(outputTable);
+var outputTable = document.getElementById("outputTable");
+/**
+ * This is the event listener for the dropdown to choose the days in the week.
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ */
 document.getElementById("daysInWeek").addEventListener("click", function () {
     switch (this.value) {
         case "5": {
@@ -180,6 +207,7 @@ document.getElementById("daysInWeek").addEventListener("click", function () {
  * 		fields
  *
  * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
 function readClasses() {
     var classes = new Array();
@@ -202,6 +230,7 @@ function readClasses() {
  * @return {string[]} The modified array
  *
  * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
 function trimArray(arr) {
     for (var i = 0; i < arr.length; i++) {
@@ -214,6 +243,12 @@ function trimArray(arr) {
     }
     return arr;
 }
+/**
+ * This is the event listener for the "Generate" button.
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ */
 document.getElementById("generate").addEventListener("click", function () {
     var classes = readClasses();
     trimArray(classes);
@@ -222,11 +257,24 @@ document.getElementById("generate").addEventListener("click", function () {
     else
         outputTable.innerHTML = "";
 });
-function addMoreEventListener() {
-    var numRowsToAdd = parseInt(prompt("How many rows would you like to add?"));
-    var numRowsExisting = inputTable.getElementsByTagName("tr").length - 2;
-    /* Get number of rows already in table, subtract two to exclude header row
-       and "Add more..." button */
-    var totalRows = numRowsExisting + numRowsToAdd;
-    drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), totalRows);
+// TODO: document this method
+/**
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+function serialize() {
+    var obj = {};
+    obj.classes = readClasses();
+    obj.daysInWeek = daysInWeek;
+    return JSON.stringify(obj); // TODO: Add JSON polyfill
 }
+/**
+ * This is the event listener for the "Serialize" button.
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+document.getElementById("serialize").addEventListener("click", function () {
+    var blob = new Blob([serialize()], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, "agenda.json");
+});

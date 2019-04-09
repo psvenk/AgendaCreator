@@ -1,12 +1,14 @@
 /*
-Copyright 2019 psvenk
+Copyright 2018-2019 psvenk
 This file is part of AgendaCreator.
 
 AgendaCreator is free/libre software: you can redistribute it and/or modify it
 under the terms of the MIT/Expat License.
 
+SPDX-License-Identifier: MIT
+
 You should have received a copy of the MIT/Expat License
-along with AgendaCreator. If not, see <https://opensource.org/licenses/MIT>.
+along with AgendaCreator. If not, see <https://spdx.org/licenses/MIT.html>.
 */
 
 #alphaText {
@@ -21,4 +23,8 @@ along with AgendaCreator. If not, see <https://opensource.org/licenses/MIT>.
 table, th, td {
 	border: 1px solid black;
 	border-collapse: collapse;
+}
+
+#copyright {
+	width: 40em;
 }
