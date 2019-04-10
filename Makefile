@@ -1,6 +1,6 @@
 default: build
 
-install:
+prepare:
 	npm install
 
 build:
