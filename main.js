@@ -269,8 +269,8 @@ document.getElementById("generate").addEventListener("click", function () {
  */
 function serialize() {
     var obj = {};
-    obj.version = "0.1.0";
-    // The Node.js build script will change "0.1.0" to the current version
+    obj.version = "0.1.1";
+    // The Node.js build script will change "0.1.1" to the current version
     obj.classes = readClasses();
     obj.daysInWeek = daysInWeek;
     return JSON.stringify(obj); // TODO: Add JSON polyfill
