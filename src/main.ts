@@ -1,13 +1,16 @@
 /*
-Copyright 2019 psvenk
-This file is part of AgendaCreator.
+  Copyright 2019 psvenk
+  This file is part of AgendaCreator.
 
-AgendaCreator is free/libre and open-source software: you can redistribute it
-and/or modify it under the terms of the Apache License, Version 2.0 or any
-later version, or the Mozilla Public License, Version 2.0 or any later version.
-See file `COPYING` for more details.
+  AgendaCreator is free/libre and open-source software: you can redistribute it
+  and/or modify it under the terms of the Apache License, Version 2.0 or any
+  later version, or the Mozilla Public License, Version 2.0 or any later version.
+  See file `COPYING` for more details.
 
-SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
+  Unless otherwise specified, all parts of this file carry the same license as
+  the license for the entire file.
+
+  SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
 */
 
 "use strict";
@@ -67,8 +70,8 @@ var InputOrOutput: any = {"input": true, "output": false};
  * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
 function drawTable(daysInWeek: string[], table: HTMLTableElement,
-		inputOrOutput: boolean, classes: string[] = [],
-		numClasses: number = 4): void {
+				   inputOrOutput: boolean, classes: string[] = [],
+				   numClasses: number = 4): void {
 	
 	table.innerHTML = "";
 	// Clear table
@@ -90,94 +93,97 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 		   to limit scope */
 
 		var currentTh: HTMLTableHeaderCellElement =
-				document.createElement("th");
+			document.createElement("th");
 		currentTh.textContent = daysInWeek[col - 1];
 		theadTr.appendChild(currentTh);
 	})();
 	// Populate header
 	(function(): void {
-		
 		if (inputOrOutput === InputOrOutput.output)
-		for (var row: number = 1; row <= classes.length; row++) {
-			var tr: HTMLTableRowElement = document.createElement("tr");
-			tbody.appendChild(tr);
-			// Create a row and add it to the <tbody>
-			
-			tr.appendChild(document.createElement("td")).textContent =
+			for (var row: number = 1; row <= classes.length; row++) {
+				var tr: HTMLTableRowElement = document.createElement("tr");
+				tbody.appendChild(tr);
+				// Create a row and add it to the <tbody>
+				
+				tr.appendChild(document.createElement("td")).textContent =
 					classes[row - 1];
-			// Add the name of the current class in the leftmost position
-			
-			for (var col: number = 1; col <= daysInWeek.length; col++) {
-				tr.appendChild(document.createElement("td"));
+				// Add the name of the current class in the leftmost position
+				
+				for (var col: number = 1; col <= daysInWeek.length; col++) {
+					tr.appendChild(document.createElement("td"));
+				}
+				// Create remaining cells
 			}
-			// Create remaining cells
-		}
 		
 		else // if (inputOrOutput === InputOrOutput.input)
-		for (var row: number = 1, maxRows: number = numClasses + 1;
-				row <= maxRows; row++) {
-			var tr: HTMLTableRowElement = document.createElement("tr");
-			tbody.appendChild(tr);
-			// Create a row and add it to the <tbody>
-			
-			if (row != maxRows) {
-				var input: HTMLInputElement = document.createElement("input");
+			for (var row: number = 1, maxRows: number = numClasses + 1;
+				 row <= maxRows; row++) {
+				var tr: HTMLTableRowElement = document.createElement("tr");
+				tbody.appendChild(tr);
+				// Create a row and add it to the <tbody>
 				
-				if (typeof classes[row - 1] !== "undefined" &&
-						classes.length > 0)
-					input.value = classes[row - 1];
-				
-				tr.appendChild(document.createElement("td")).appendChild(input);
-				// Add a cell with an <input> in the leftmost position
-			} else {
-				// If last row
-
-				var button: HTMLInputElement = document.createElement("input");
-				button.type = "button";
-				button.value = decodeEntities("Add more&hellip;");
-				button.id = "addMore";
-				/* Create an <input> and set it to be a button with the text
-				   "Add more..." */
-
-				tr.appendChild(document.createElement("td"))
-						.appendChild(button);
-				// Add the button in the leftmost position
-				
-				button.addEventListener("click", function(): void {
-					var numRowsToAdd: number = parseInt(
-						prompt("How many rows would you like to add?"));
-					var numRowsExisting: number =
-						inputTable.getElementsByTagName("tr").length - 2;
-					/* Get number of rows already in table, subtract two to
-					   exclude header row and "Add more..." button */
-					var totalRows: number = numRowsExisting + numRowsToAdd;
+				if (row != maxRows) {
+					var input: HTMLInputElement =
+						document.createElement("input");
 					
-					drawTable(daysInWeek, inputTable, InputOrOutput.input,
-							  readClasses(), totalRows);
-				});
-				// Add event listener for "Add more..." button
+					if (typeof classes[row - 1] !== "undefined" &&
+						classes.length > 0)
+						input.value = classes[row - 1];
+					
+					tr.appendChild(document.createElement("td")).appendChild(
+						input
+					);
+					// Add a cell with an <input> in the leftmost position
+				} else {
+					// If last row
+
+					var button: HTMLInputElement =
+						document.createElement("input");
+					button.type = "button";
+					button.value = decodeEntities("Add more&hellip;");
+					button.id = "addMore";
+					/* Create an <input> and set it to be a button with the text
+					   "Add more..." */
+
+					tr.appendChild(document.createElement("td"))
+						.appendChild(button);
+					// Add the button in the leftmost position
+					
+					button.addEventListener("click", function(): void {
+						var numRowsToAdd: number = parseInt(
+							prompt("How many rows would you like to add?"));
+						var numRowsExisting: number =
+							inputTable.getElementsByTagName("tr").length - 2;
+						/* Get number of rows already in table, subtract two to
+						   exclude header row and "Add more..." button */
+						var totalRows: number = numRowsExisting + numRowsToAdd;
+						
+						drawTable(daysInWeek, inputTable, InputOrOutput.input,
+								  readClasses(), totalRows);
+					});
+					// Add event listener for "Add more..." button
+				}
+				
+				for (var col: number = 1; col <= daysInWeek.length; col++) {
+					tr.appendChild(document.createElement("td"));
+				}
+				// Create remaining cells
 			}
-			
-			for (var col: number = 1; col <= daysInWeek.length; col++) {
-				tr.appendChild(document.createElement("td"));
-			}
-			// Create remaining cells
-		}
 	})();
 	// Create more rows and populate them
 }
 
 var daysInWeek: string[] = ["Monday", "Tuesday", "Wednesday", "Thursday",
-		"Friday"];
+							"Friday"];
 
 var inputTable: HTMLTableElement = document.getElementById("inputTable") as
-		HTMLTableElement;
+HTMLTableElement;
 // Get reference to <table> and store it in variable `table`
 
 drawTable(daysInWeek, inputTable, InputOrOutput.input);
 
 var outputTable: HTMLTableElement = document.getElementById("outputTable") as
-		HTMLTableElement;
+HTMLTableElement;
 
 /**
  * This is the event listener for the dropdown to choose the days in the week.
@@ -185,60 +191,67 @@ var outputTable: HTMLTableElement = document.getElementById("outputTable") as
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
-document.getElementById("daysInWeek").addEventListener("click",
-		function(): void {
-	switch ((this as HTMLInputElement).value) {
-	case "5": {
-		daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
-				"Friday"];
-		drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(),
-				inputTable.getElementsByTagName("tr").length - 2);
+document.getElementById("daysInWeek").addEventListener(
+	"click", function(): void {
+		switch ((this as HTMLInputElement).value) {
+				// TODO: switch -> if (performance)
+			case "5": {
+				daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
+							  "Friday"];
+				drawTable(daysInWeek, inputTable, InputOrOutput.input,
+						  readClasses(),
+						  inputTable.getElementsByTagName("tr").length - 2);
 				/* Get number of rows already in table, subtract two to exclude
 				   header row and "Add more..." button */
-		break;
-	}
-	case "7": {
-		daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
-				"Friday", "Saturday", "Sunday"];
-		drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(),
-				inputTable.getElementsByTagName("tr").length - 2);
-		break;
-	}
-	default: {
-		var daysRaw: string = prompt("List the days in the week that " +
-				"you want to include (put commas between the days, and " +
-				"type \"\\,\" without the quotation marks to insert a " +
-				"literal comma): ");
-		
-		var days: string[] = daysRaw.match(/(\\.|[^,])+/g);
-		/*
-			Split daysRaw into strings, with the comma as a delimiter,
-			but does not split when "\," is encountered
-			https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
-		*/
-		for (var i = 0; i < days.length; i++) {
-			days[i] = days[i].replace(/^\s+|\s+$/gm,"")
+				break;
+			}
+			case "7": {
+				daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
+							  "Friday", "Saturday", "Sunday"];
+				drawTable(daysInWeek, inputTable, InputOrOutput.input,
+						  readClasses(),
+						  inputTable.getElementsByTagName("tr").length - 2);
+				break;
+			}
+			default: {
+				var daysRaw: string = prompt(
+					"List the days in the week that you want to include (put " +
+						"commas between the days, and type \"\\,\" without " +
+						"the quotation marks to insert a literal comma): ");
+				
+				var days: string[] = daysRaw.match(/(\\.|[^,])+/g);
+				/*
+				  Split daysRaw into strings, with the comma as a delimiter,
+				  but does not split when "\," is encountered
+				  https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
+				*/
+				for (var i = 0; i < days.length; i++) {
+					days[i] = days[i].replace(/^\s+|\s+$/gm,"")
 						.replace(/\\,/g, ",");
-			/*
-			First line: Trim leading and trailing whitespace so that
-			"a,b" and "a, b" are treated the same way
-			
-			Equivalent to days[i].trim(), but with better browser support
-			https://www.w3schools.com/jsref/jsref_trim_string.asp
-			
-			Second line: Replace all occurences of "\," with ","
-			*/
+					/*
+					  First line: Trim leading and trailing whitespace so that
+					  "a,b" and "a, b" are treated the same way
+					  
+					  Equivalent to days[i].trim(), but with better browser
+					  support
+					  
+					  https://www.w3schools.com/jsref/jsref_trim_string.asp
+					  
+					  Second line: Replace all occurences of "\," with ","
+					*/
+				}
+				
+				daysInWeek = days;
+				
+				drawTable(daysInWeek, inputTable, InputOrOutput.input,
+						  readClasses(),
+						  inputTable.getElementsByTagName("tr").length - 2);
+				
+				break;
+			}
 		}
-		
-		daysInWeek = days;
-		
-		drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(),
-				inputTable.getElementsByTagName("tr").length - 2);
-		
-		break;
 	}
-	}
-});
+);
 
 /**
  * Reads the names of classes entered into the <input> fields in the input
@@ -253,10 +266,10 @@ document.getElementById("daysInWeek").addEventListener("click",
 function readClasses(): string[] {
 	var classes: string[] = new Array();
 	var rows: HTMLCollectionOf<HTMLTableRowElement> =
-			inputTable.getElementsByTagName("tr");
+		inputTable.getElementsByTagName("tr");
 	for (var i = 1; i < rows.length - 1; i++) {
 		var input: HTMLInputElement = rows[i].getElementsByTagName("td")[0]
-				.getElementsByTagName("input")[0];
+			.getElementsByTagName("input")[0];
 		classes.push(input.value);
 	}
 	// i is initially 1 so that the header row is ignored, and stops
@@ -283,7 +296,7 @@ function trimArray(arr: string[]): string[] {
 			i--;
 		}
 		/* If an element in array is blank or undefined, remove it and
-		go back in case there are consecutive blank elements */
+		   go back in case there are consecutive blank elements */
 	}
 	return arr;
 }
@@ -294,16 +307,17 @@ function trimArray(arr: string[]): string[] {
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
-document.getElementById("generate").addEventListener("click",
-		function(): void {
-	var classes: string[] = readClasses();
-	trimArray(classes);
-	
-	if (typeof classes !== "undefined" && classes.length > 0)
-		drawTable(daysInWeek, outputTable, InputOrOutput.output, classes);
-	else
-		outputTable.innerHTML = "";
-});
+document.getElementById("generate").addEventListener(
+	"click", function(): void {
+		var classes: string[] = readClasses();
+		trimArray(classes);
+		
+		if (typeof classes !== "undefined" && classes.length > 0)
+			drawTable(daysInWeek, outputTable, InputOrOutput.output, classes);
+		else
+			outputTable.innerHTML = "";
+	}
+);
 
 // TODO: document this method
 /**
@@ -312,20 +326,87 @@ document.getElementById("generate").addEventListener("click",
  */
 function serialize(): string {
 	var obj: any = {};
+	obj.version = "VERSION";
+	// The Node.js build script will change "VERSION" to the current version
 	obj.classes = readClasses();
 	obj.daysInWeek = daysInWeek;
 	return JSON.stringify(obj); // TODO: Add JSON polyfill
 }
 
+// TODO: document this method (JSDoc)
+// TODO: check if object contains all required elements
 /**
- * This is the event listener for the "Serialize" button.
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+function deserialize(JsonInput: string): void {
+	var obj: any = JSON.parse(JsonInput);
+	daysInWeek = obj.daysInWeek;
+	drawTable(daysInWeek, inputTable, InputOrOutput.input, obj.classes,
+	          obj.classes.length);
+	if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
+	                        "Friday"]) {
+		(document.getElementById("daysInWeek") as HTMLInputElement).value = "5";
+	}
+	else if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
+	                             "Friday", "Saturday", "Sunday"]) {
+		(document.getElementById("daysInWeek") as HTMLInputElement).value = "7";
+	}
+	else {
+		(document.getElementById("daysInWeek") as HTMLInputElement).value =
+			"custom";
+		// TODO: have text box next to "Custom:" with the actual days of week
+	}
+}
+
+/**
+ * This is the event listener for the "Export" button.
  * 
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+
  */
-document.getElementById("serialize").addEventListener("click",
-		function(): void {
-	var blob = new Blob([serialize()],
-			{type: "text/plain;charset=utf-8"});
-	saveAs(blob, "agenda.json");
-});
+document.getElementById("export").addEventListener(
+	"click", function(): void {
+		var export_more: HTMLElement = document.getElementById("export_more");
+		export_more.style.display =
+			export_more.style.display == "none" ? "block" : "none";
+		(document.getElementById("export_output") as HTMLTextAreaElement).value = serialize();
+	}
+);
+
+document.getElementById("export_download").addEventListener(
+	"click", function(): void {
+		var blob = new Blob([serialize()],
+							{type: "application/json;charset=utf-8"});
+		saveAs(blob, "agenda.json");
+	}
+);
+
+document.getElementById("import").addEventListener(
+	"click", function(): void {
+		var import_more: HTMLElement = document.getElementById("import_more");
+		import_more.style.display =
+			import_more.style.display == "none" ? "inline" : "none";
+	}
+);
+
+document.getElementById("import_submit").addEventListener(
+	"click", function(): void {
+		deserialize((document.getElementById("import_input") as
+		             HTMLTextAreaElement).value);
+	}
+);
+
+// TODO: check validity of input https://stackoverflow.com/questions/12281775/get-data-from-file-input-in-jquery
+document.getElementById("import_upload").addEventListener(
+	"click", function(): void {
+		var file: File = (document.getElementById("import_filepicker") as
+		                  HTMLInputElement).files[0];
+		var reader: FileReader = new FileReader();
+		reader.readAsText(file);
+		reader.onload = function() {
+			deserialize(reader.result as string);
+			// TODO: change to "load" event, see FileReader on MDN
+		};
+	}
+);
