@@ -1,13 +1,16 @@
 /*
-Copyright 2019 psvenk
-This file is part of AgendaCreator.
+  Copyright 2019 psvenk
+  This file is part of AgendaCreator.
 
-AgendaCreator is free/libre and open-source software: you can redistribute it
-and/or modify it under the terms of the Apache License, Version 2.0 or any
-later version, or the Mozilla Public License, Version 2.0 or any later version.
-See file `COPYING` for more details.
+  AgendaCreator is free/libre and open-source software: you can redistribute it
+  and/or modify it under the terms of the Apache License, Version 2.0 or any
+  later version, or the Mozilla Public License, Version 2.0 or any later version.
+  See file `COPYING` for more details.
 
-SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
+  Unless otherwise specified, all parts of this file carry the same license as
+  the license for the entire file.
+
+  SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
 */
 "use strict";
 /**
@@ -155,6 +158,7 @@ var outputTable = document.getElementById("outputTable");
  */
 document.getElementById("daysInWeek").addEventListener("click", function () {
     switch (this.value) {
+        // TODO: switch -> if (performance)
         case "5": {
             daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
                 "Friday"];
@@ -170,27 +174,28 @@ document.getElementById("daysInWeek").addEventListener("click", function () {
             break;
         }
         default: {
-            var daysRaw = prompt("List the days in the week that " +
-                "you want to include (put commas between the days, and " +
-                "type \"\\,\" without the quotation marks to insert a " +
-                "literal comma): ");
+            var daysRaw = prompt("List the days in the week that you want to include (put " +
+                "commas between the days, and type \"\\,\" without " +
+                "the quotation marks to insert a literal comma): ");
             var days = daysRaw.match(/(\\.|[^,])+/g);
             /*
-                Split daysRaw into strings, with the comma as a delimiter,
-                but does not split when "\," is encountered
-                https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
+              Split daysRaw into strings, with the comma as a delimiter,
+              but does not split when "\," is encountered
+              https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
             */
             for (var i = 0; i < days.length; i++) {
                 days[i] = days[i].replace(/^\s+|\s+$/gm, "")
                     .replace(/\\,/g, ",");
                 /*
-                First line: Trim leading and trailing whitespace so that
-                "a,b" and "a, b" are treated the same way
-                
-                Equivalent to days[i].trim(), but with better browser support
-                https://www.w3schools.com/jsref/jsref_trim_string.asp
-                
-                Second line: Replace all occurences of "\," with ","
+                  First line: Trim leading and trailing whitespace so that
+                  "a,b" and "a, b" are treated the same way
+                  
+                  Equivalent to days[i].trim(), but with better browser
+                  support
+                  
+                  https://www.w3schools.com/jsref/jsref_trim_string.asp
+                  
+                  Second line: Replace all occurences of "\," with ","
                 */
             }
             daysInWeek = days;
@@ -239,7 +244,7 @@ function trimArray(arr) {
             i--;
         }
         /* If an element in array is blank or undefined, remove it and
-        go back in case there are consecutive blank elements */
+           go back in case there are consecutive blank elements */
     }
     return arr;
 }
@@ -264,17 +269,67 @@ document.getElementById("generate").addEventListener("click", function () {
  */
 function serialize() {
     var obj = {};
+    obj.version = "0.1.0";
+    // The Node.js build script will change "0.1.0" to the current version
     obj.classes = readClasses();
     obj.daysInWeek = daysInWeek;
     return JSON.stringify(obj); // TODO: Add JSON polyfill
 }
+// TODO: document this method (JSDoc)
+// TODO: check if object contains all required elements
 /**
- * This is the event listener for the "Serialize" button.
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+function deserialize(JsonInput) {
+    var obj = JSON.parse(JsonInput);
+    daysInWeek = obj.daysInWeek;
+    drawTable(daysInWeek, inputTable, InputOrOutput.input, obj.classes, obj.classes.length);
+    if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
+        "Friday"]) {
+        document.getElementById("daysInWeek").value = "5";
+    }
+    else if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
+        "Friday", "Saturday", "Sunday"]) {
+        document.getElementById("daysInWeek").value = "7";
+    }
+    else {
+        document.getElementById("daysInWeek").value =
+            "custom";
+        // TODO: have text box next to "Custom:" with the actual days of week
+    }
+}
+/**
+ * This is the event listener for the "Export" button.
  *
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+
  */
-document.getElementById("serialize").addEventListener("click", function () {
-    var blob = new Blob([serialize()], { type: "text/plain;charset=utf-8" });
+document.getElementById("export").addEventListener("click", function () {
+    var export_more = document.getElementById("export_more");
+    export_more.style.display =
+        export_more.style.display == "none" ? "block" : "none";
+    document.getElementById("export_output").value = serialize();
+});
+document.getElementById("export_download").addEventListener("click", function () {
+    var blob = new Blob([serialize()], { type: "application/json;charset=utf-8" });
     saveAs(blob, "agenda.json");
+});
+document.getElementById("import").addEventListener("click", function () {
+    var import_more = document.getElementById("import_more");
+    import_more.style.display =
+        import_more.style.display == "none" ? "inline" : "none";
+});
+document.getElementById("import_submit").addEventListener("click", function () {
+    deserialize(document.getElementById("import_input").value);
+});
+// TODO: check validity of input https://stackoverflow.com/questions/12281775/get-data-from-file-input-in-jquery
+document.getElementById("import_upload").addEventListener("click", function () {
+    var file = document.getElementById("import_filepicker").files[0];
+    var reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function () {
+        deserialize(reader.result);
+        // TODO: change to "load" event, see FileReader on MDN
+    };
 });

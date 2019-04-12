@@ -22,7 +22,7 @@ SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+ OR MIT
 		<!-- TODO: add package.json file with TypeScript and FileSaver as dependencies -->
 	</head>
 	<body>
-		<h1>AgendaCreator<sub id="alphaText">alpha</sub> <span class="build">(Build 0.0.2019.04.09.01)</span></h1>
+		<h1>AgendaCreator<sub id="betaText">beta</sub> <span class="build">(Version 0.1.0)</span></h1>
 		<select id="daysInWeek">
 			<option value="5" selected="selected">5-day week</option>
 			<option value="7">7-day week</option>
@@ -89,7 +89,24 @@ SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+ OR MIT
 		<table id="outputTable"></table>
 		<br />
 		
-		<input type="button" id="serialize" value="Download JSON file (experimental)" />
+		<input type="button" id="export" value="Export JSON" />
+		<div id="export_more" style="display:none">
+			<br /><br />
+			<textarea id="export_output" rows="6" cols="40" disabled="disabled"></textarea>
+			<br /><br />
+			<input type="button" id="export_download" value="Download JSON" />
+		</div>
+		<br /><br /><br />
+		
+		<input type="button" id="import" value="Import JSON" />
+		<div id="import_more" style="display:none">
+			<br /><br />
+			<textarea id="import_input" rows="6" cols="40"></textarea>
+			<input type="button" id="import_submit" value="Import" />
+			<br /><br />
+			<input type="file" id="import_filepicker" />
+			<input type="button" id="import_upload" value="Upload" />
+		</div>
 		<br /><br />
 		
 		<p id="copyright">
