@@ -89,7 +89,7 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
         })();
     // Populate header
     (function () {
-        if (inputOrOutput === InputOrOutput.output)
+        if (inputOrOutput == InputOrOutput.output)
             for (var row = 1; row <= classes.length; row++) {
                 var tr = document.createElement("tr");
                 tbody.appendChild(tr);
@@ -102,14 +102,14 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
                 }
                 // Create remaining cells
             }
-        else // if (inputOrOutput === InputOrOutput.input)
+        else // if (inputOrOutput == InputOrOutput.input)
             for (var row = 1, maxRows = numClasses + 1; row <= maxRows; row++) {
                 var tr = document.createElement("tr");
                 tbody.appendChild(tr);
                 // Create a row and add it to the <tbody>
                 if (row != maxRows) {
                     var input = document.createElement("input");
-                    if (typeof classes[row - 1] !== "undefined" &&
+                    if (typeof classes[row - 1] != "undefined" &&
                         classes.length > 0)
                         input.value = classes[row - 1];
                     tr.appendChild(document.createElement("td")).appendChild(input);
@@ -151,58 +151,102 @@ var inputTable = document.getElementById("inputTable");
 drawTable(daysInWeek, inputTable, InputOrOutput.input);
 var outputTable = document.getElementById("outputTable");
 /**
- * This is the event listener for the dropdown to choose the days in the week.
+ * This method takes a comma-delimited list in a string (with "\," for a literal
+ * comma) and sets the days of the week to the days given in the list.
+ *
+ * @param {string} daysRaw: The comma-delimited list to parse
  *
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
+function setCustomDays(daysRaw) {
+    var days = daysRaw.match(/(\\.|[^,])+/g);
+    /*
+      Split daysRaw into strings, with the comma as a delimiter,
+      but does not split when "\," is encountered
+      https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
+    */
+    for (var i = 0; i < days.length; i++) {
+        days[i] = days[i].replace(/^\s+|\s+$/gm, "")
+            .replace(/\\,/g, ",");
+        /*
+          First line: Trim leading and trailing whitespace so that
+          "a,b" and "a, b" are treated the same way
+          
+          Equivalent to days[i].trim(), but with better browser
+          support
+          
+          https://www.w3schools.com/jsref/jsref_trim_string.asp
+          
+          Second line: Replace all occurences of "\," with ","
+        */
+    }
+    daysInWeek = days;
+    drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 2);
+    document.getElementById("customDays").value =
+        daysRaw;
+}
+/**
+ * This function converts a string array into a comma-delimited list in a string
+ * (with "\," for a literal comma), optionally using the days of the week
+ * currently displayed. The output of this function should be suitable input
+ * for setCustomDays().
+ *
+ * @param {string[]} days: The string array to use. If none is given, the global
+ * 		variable `daysInWeek` is used.
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+function getCustomDays(days) {
+    if (typeof days == "undefined" || days.length == 0)
+        days = daysInWeek;
+    var output = "";
+    for (var i = 0; i < days.length; i++) {
+        output += days[i].replace(/,/g, "\\,");
+        if (i != days.length - 1)
+            output += ", ";
+    }
+    return output;
+}
+/**
+ * This is the event listener for the dropdown to choose the days in the week.
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
 document.getElementById("daysInWeek").addEventListener("click", function () {
     switch (this.value) {
-        // TODO: switch -> if (performance)
         case "5": {
             daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
                 "Friday"];
             drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 2);
             /* Get number of rows already in table, subtract two to exclude
                header row and "Add more..." button */
+            document.getElementById("customDays_more").style.display =
+                "none";
             break;
         }
         case "7": {
             daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
                 "Friday", "Saturday", "Sunday"];
             drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 2);
+            document.getElementById("customDays_more").style.display =
+                "none";
             break;
         }
         default: {
-            var daysRaw = prompt("List the days in the week that you want to include (put " +
+            setCustomDays(prompt("List the days in the week that you want to include (put " +
                 "commas between the days, and type \"\\,\" without " +
-                "the quotation marks to insert a literal comma): ");
-            var days = daysRaw.match(/(\\.|[^,])+/g);
-            /*
-              Split daysRaw into strings, with the comma as a delimiter,
-              but does not split when "\," is encountered
-              https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
-            */
-            for (var i = 0; i < days.length; i++) {
-                days[i] = days[i].replace(/^\s+|\s+$/gm, "")
-                    .replace(/\\,/g, ",");
-                /*
-                  First line: Trim leading and trailing whitespace so that
-                  "a,b" and "a, b" are treated the same way
-                  
-                  Equivalent to days[i].trim(), but with better browser
-                  support
-                  
-                  https://www.w3schools.com/jsref/jsref_trim_string.asp
-                  
-                  Second line: Replace all occurences of "\," with ","
-                */
-            }
-            daysInWeek = days;
-            drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 2);
+                "the quotation marks to insert a literal comma): "));
+            document.getElementById("customDays_more").style.display =
+                "inline-block";
             break;
         }
     }
+});
+document.getElementById("setCustomDays").addEventListener("click", function () {
+    setCustomDays(document.getElementById("customDays").value);
 });
 /**
  * Reads the names of classes entered into the <input> fields in the input
@@ -239,7 +283,7 @@ function readClasses() {
  */
 function trimArray(arr) {
     for (var i = 0; i < arr.length; i++) {
-        if (typeof arr[i] === "undefined" || arr[i] === "") {
+        if (typeof arr[i] == "undefined" || arr[i] == "") {
             arr.splice(i, 1);
             i--;
         }
@@ -249,7 +293,7 @@ function trimArray(arr) {
     return arr;
 }
 /**
- * This is the event listener for the "Generate" button.
+ * This is the event listener for the "Generate output" button.
  *
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+ OR MIT
@@ -257,20 +301,24 @@ function trimArray(arr) {
 document.getElementById("generate").addEventListener("click", function () {
     var classes = readClasses();
     trimArray(classes);
-    if (typeof classes !== "undefined" && classes.length > 0)
+    if (typeof classes != "undefined" && classes.length > 0)
         drawTable(daysInWeek, outputTable, InputOrOutput.output, classes);
     else
         outputTable.innerHTML = "";
 });
-// TODO: document this method
 /**
+ * This method stores in a JSON string the data that the user entered into
+ * AgendaCreator, so that the data can be exported as a JSON file.
+ *
+ * @return {string} The serialized JSON string
+ *
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+
  */
 function serialize() {
     var obj = {};
-    obj.version = "0.1.1";
-    // The Node.js build script will change "0.1.1" to the current version
+    obj.version = "0.1.3";
+    // The Node.js build script will change "0.1.3" to the current version
     obj.classes = readClasses();
     obj.daysInWeek = daysInWeek;
     return JSON.stringify(obj); // TODO: Add JSON polyfill
@@ -278,6 +326,11 @@ function serialize() {
 // TODO: document this method (JSDoc)
 // TODO: check if object contains all required elements
 /**
+ * This method reads from a JSON string and applies the user settings defined
+ * in the JSON.
+ *
+ * @param {string} JsonInput: The string to read from
+ *
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+
  */
@@ -288,19 +341,24 @@ function deserialize(JsonInput) {
     if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
         "Friday"]) {
         document.getElementById("daysInWeek").value = "5";
+        document.getElementById("customDays_more").style.display = "none";
     }
     else if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
         "Friday", "Saturday", "Sunday"]) {
         document.getElementById("daysInWeek").value = "7";
+        document.getElementById("customDays_more").style.display = "none";
     }
     else {
         document.getElementById("daysInWeek").value =
             "custom";
-        // TODO: have text box next to "Custom:" with the actual days of week
+        document.getElementById("customDays_more").style.display =
+            "inline-block";
+        document.getElementById("customDays").value =
+            getCustomDays();
     }
 }
 /**
- * This is the event listener for the "Export" button.
+ * This is the event listener for the "Export JSON" button.
  *
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+
@@ -311,25 +369,51 @@ document.getElementById("export").addEventListener("click", function () {
         export_more.style.display == "none" ? "block" : "none";
     document.getElementById("export_output").value = serialize();
 });
+/**
+ * This is the event listener for the "Download JSON" button (only visible after
+ * "Export JSON" is clicked).
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
 document.getElementById("export_download").addEventListener("click", function () {
     var blob = new Blob([serialize()], { type: "application/json;charset=utf-8" });
     saveAs(blob, "agenda.json");
 });
+/**
+ * This is the event listener for the "Import JSON" button.
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
 document.getElementById("import").addEventListener("click", function () {
     var import_more = document.getElementById("import_more");
     import_more.style.display =
         import_more.style.display == "none" ? "inline" : "none";
 });
+/**
+ * This is the event listener for the "Import" button beside the textarea
+ * visible after "Import JSON" is clicked.
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
 document.getElementById("import_submit").addEventListener("click", function () {
     deserialize(document.getElementById("import_input").value);
 });
-// TODO: check validity of input https://stackoverflow.com/questions/12281775/get-data-from-file-input-in-jquery
+/**
+ * This is the event listener for the "Upload" button (only visible after
+ * "Import JSON" is clicked).
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
 document.getElementById("import_upload").addEventListener("click", function () {
     var file = document.getElementById("import_filepicker").files[0];
     var reader = new FileReader();
     reader.readAsText(file);
-    reader.onload = function () {
+    reader.addEventListener("load", function () {
         deserialize(reader.result);
         // TODO: change to "load" event, see FileReader on MDN
-    };
+    });
 });
