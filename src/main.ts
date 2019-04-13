@@ -99,7 +99,7 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 	})();
 	// Populate header
 	(function(): void {
-		if (inputOrOutput === InputOrOutput.output)
+		if (inputOrOutput == InputOrOutput.output)
 			for (var row: number = 1; row <= classes.length; row++) {
 				var tr: HTMLTableRowElement = document.createElement("tr");
 				tbody.appendChild(tr);
@@ -115,7 +115,7 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 				// Create remaining cells
 			}
 		
-		else // if (inputOrOutput === InputOrOutput.input)
+		else // if (inputOrOutput == InputOrOutput.input)
 			for (var row: number = 1, maxRows: number = numClasses + 1;
 				 row <= maxRows; row++) {
 				var tr: HTMLTableRowElement = document.createElement("tr");
@@ -126,7 +126,7 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 					var input: HTMLInputElement =
 						document.createElement("input");
 					
-					if (typeof classes[row - 1] !== "undefined" &&
+					if (typeof classes[row - 1] != "undefined" &&
 						classes.length > 0)
 						input.value = classes[row - 1];
 					
@@ -186,10 +186,71 @@ var outputTable: HTMLTableElement = document.getElementById("outputTable") as
 HTMLTableElement;
 
 /**
- * This is the event listener for the dropdown to choose the days in the week.
+ * This method takes a comma-delimited list in a string (with "\," for a literal
+ * comma) and sets the days of the week to the days given in the list.
+ * 
+ * @param {string} daysRaw: The comma-delimited list to parse
  * 
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ */
+function setCustomDays(daysRaw: string): void {
+	var days: string[] = daysRaw.match(/(\\.|[^,])+/g);
+	/*
+	  Split daysRaw into strings, with the comma as a delimiter,
+	  but does not split when "\," is encountered
+	  https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
+	*/
+	for (var i = 0; i < days.length; i++) {
+		days[i] = days[i].replace(/^\s+|\s+$/gm,"")
+			.replace(/\\,/g, ",");
+		/*
+		  First line: Trim leading and trailing whitespace so that
+		  "a,b" and "a, b" are treated the same way
+		  
+		  Equivalent to days[i].trim(), but with better browser
+		  support
+		  
+		  https://www.w3schools.com/jsref/jsref_trim_string.asp
+		  
+		  Second line: Replace all occurences of "\," with ","
+		*/
+	}
+	daysInWeek = days;
+	drawTable(daysInWeek, inputTable, InputOrOutput.input,
+	          readClasses(),
+	          inputTable.getElementsByTagName("tr").length - 2);
+	(document.getElementById("customDays") as HTMLInputElement).value =
+		daysRaw;
+}
+
+/**
+ * This function converts a string array into a comma-delimited list in a string
+ * (with "\," for a literal comma), optionally using the days of the week
+ * currently displayed. The output of this function should be suitable input
+ * for setCustomDays().
+ * 
+ * @param {string[]} days: The string array to use. If none is given, the global
+ * 		variable `daysInWeek` is used.
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+function getCustomDays(days ?: string[]): string {
+	if (typeof days == "undefined" || days.length == 0) days = daysInWeek;
+	var output: string = "";
+	for (var i = 0; i < days.length; i++) {
+		output += days[i].replace(/,/g, "\\,");
+		if (i != days.length - 1) output += ", ";
+	}
+	return output;
+}
+
+/**
+ * This is the event listener for the dropdown to choose the days in the week.
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
  */
 document.getElementById("daysInWeek").addEventListener(
 	"click", function(): void {
@@ -203,6 +264,8 @@ document.getElementById("daysInWeek").addEventListener(
 						  inputTable.getElementsByTagName("tr").length - 2);
 				/* Get number of rows already in table, subtract two to exclude
 				   header row and "Add more..." button */
+				document.getElementById("customDays_more").style.display =
+					"none";
 				break;
 			}
 			case "7": {
@@ -211,45 +274,27 @@ document.getElementById("daysInWeek").addEventListener(
 				drawTable(daysInWeek, inputTable, InputOrOutput.input,
 						  readClasses(),
 						  inputTable.getElementsByTagName("tr").length - 2);
+				document.getElementById("customDays_more").style.display =
+					"none";
 				break;
 			}
 			default: {
-				var daysRaw: string = prompt(
+				setCustomDays(prompt(
 					"List the days in the week that you want to include (put " +
 						"commas between the days, and type \"\\,\" without " +
-						"the quotation marks to insert a literal comma): ");
-				
-				var days: string[] = daysRaw.match(/(\\.|[^,])+/g);
-				/*
-				  Split daysRaw into strings, with the comma as a delimiter,
-				  but does not split when "\," is encountered
-				  https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
-				*/
-				for (var i = 0; i < days.length; i++) {
-					days[i] = days[i].replace(/^\s+|\s+$/gm,"")
-						.replace(/\\,/g, ",");
-					/*
-					  First line: Trim leading and trailing whitespace so that
-					  "a,b" and "a, b" are treated the same way
-					  
-					  Equivalent to days[i].trim(), but with better browser
-					  support
-					  
-					  https://www.w3schools.com/jsref/jsref_trim_string.asp
-					  
-					  Second line: Replace all occurences of "\," with ","
-					*/
-				}
-				
-				daysInWeek = days;
-				
-				drawTable(daysInWeek, inputTable, InputOrOutput.input,
-						  readClasses(),
-						  inputTable.getElementsByTagName("tr").length - 2);
-				
+						"the quotation marks to insert a literal comma): "));
+				document.getElementById("customDays_more").style.display =
+					"inline-block";
 				break;
 			}
 		}
+	}
+);
+
+document.getElementById("setCustomDays").addEventListener(
+	"click", function(): void {
+		setCustomDays((document.getElementById("customDays") as
+		               HTMLInputElement).value);
 	}
 );
 
@@ -291,7 +336,7 @@ function readClasses(): string[] {
  */
 function trimArray(arr: string[]): string[] {
 	for (var i = 0; i < arr.length; i++) {
-		if (typeof arr[i] === "undefined" || arr[i] === "") {
+		if (typeof arr[i] == "undefined" || arr[i] == "") {
 			arr.splice(i, 1);
 			i--;
 		}
@@ -312,7 +357,7 @@ document.getElementById("generate").addEventListener(
 		var classes: string[] = readClasses();
 		trimArray(classes);
 		
-		if (typeof classes !== "undefined" && classes.length > 0)
+		if (typeof classes != "undefined" && classes.length > 0)
 			drawTable(daysInWeek, outputTable, InputOrOutput.output, classes);
 		else
 			outputTable.innerHTML = "";
@@ -347,15 +392,20 @@ function deserialize(JsonInput: string): void {
 	if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
 	                        "Friday"]) {
 		(document.getElementById("daysInWeek") as HTMLInputElement).value = "5";
+		document.getElementById("customDays_more").style.display = "none";
 	}
 	else if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
 	                             "Friday", "Saturday", "Sunday"]) {
 		(document.getElementById("daysInWeek") as HTMLInputElement).value = "7";
+		document.getElementById("customDays_more").style.display = "none";
 	}
 	else {
 		(document.getElementById("daysInWeek") as HTMLInputElement).value =
 			"custom";
-		// TODO: have text box next to "Custom:" with the actual days of week
+		document.getElementById("customDays_more").style.display =
+			"inline-block";
+		(document.getElementById("customDays") as HTMLInputElement).value =
+			getCustomDays();
 	}
 }
 
