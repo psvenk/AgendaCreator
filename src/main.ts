@@ -255,7 +255,6 @@ function getCustomDays(days ?: string[]): string {
 document.getElementById("daysInWeek").addEventListener(
 	"click", function(): void {
 		switch ((this as HTMLInputElement).value) {
-				// TODO: switch -> if (performance)
 			case "5": {
 				daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
 							  "Friday"];
@@ -347,7 +346,7 @@ function trimArray(arr: string[]): string[] {
 }
 
 /**
- * This is the event listener for the "Generate" button.
+ * This is the event listener for the "Generate output" button.
  * 
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+ OR MIT
@@ -364,8 +363,12 @@ document.getElementById("generate").addEventListener(
 	}
 );
 
-// TODO: document this method
 /**
+ * This method stores in a JSON string the data that the user entered into
+ * AgendaCreator, so that the data can be exported as a JSON file.
+ * 
+ * @return {string} The serialized JSON string
+ * 
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+
  */
@@ -381,6 +384,11 @@ function serialize(): string {
 // TODO: document this method (JSDoc)
 // TODO: check if object contains all required elements
 /**
+ * This method reads from a JSON string and applies the user settings defined
+ * in the JSON.
+ * 
+ * @param {string} JsonInput: The string to read from
+ * 
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+
  */
@@ -410,7 +418,7 @@ function deserialize(JsonInput: string): void {
 }
 
 /**
- * This is the event listener for the "Export" button.
+ * This is the event listener for the "Export JSON" button.
  * 
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+
@@ -424,6 +432,13 @@ document.getElementById("export").addEventListener(
 	}
 );
 
+/**
+ * This is the event listener for the "Download JSON" button (only visible after
+ * "Export JSON" is clicked).
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
 document.getElementById("export_download").addEventListener(
 	"click", function(): void {
 		var blob = new Blob([serialize()],
@@ -432,6 +447,12 @@ document.getElementById("export_download").addEventListener(
 	}
 );
 
+/**
+ * This is the event listener for the "Import JSON" button.
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
 document.getElementById("import").addEventListener(
 	"click", function(): void {
 		var import_more: HTMLElement = document.getElementById("import_more");
@@ -440,6 +461,13 @@ document.getElementById("import").addEventListener(
 	}
 );
 
+/**
+ * This is the event listener for the "Import" button beside the textarea
+ * visible after "Import JSON" is clicked.
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
 document.getElementById("import_submit").addEventListener(
 	"click", function(): void {
 		deserialize((document.getElementById("import_input") as
@@ -447,16 +475,22 @@ document.getElementById("import_submit").addEventListener(
 	}
 );
 
-// TODO: check validity of input https://stackoverflow.com/questions/12281775/get-data-from-file-input-in-jquery
+/**
+ * This is the event listener for the "Upload" button (only visible after
+ * "Import JSON" is clicked).
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
 document.getElementById("import_upload").addEventListener(
 	"click", function(): void {
 		var file: File = (document.getElementById("import_filepicker") as
 		                  HTMLInputElement).files[0];
 		var reader: FileReader = new FileReader();
 		reader.readAsText(file);
-		reader.onload = function() {
+		reader.addEventListener("load", function(): void {
 			deserialize(reader.result as string);
 			// TODO: change to "load" event, see FileReader on MDN
-		};
+		});
 	}
 );
