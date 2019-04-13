@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Refactored some code for setting custom days of the week
 * Changed triple equals to double equals where appropriate in TypeScript
 source code
++ Improved documentation of functions in TypeScript source code
 
 ## 0.1.2 - 2019-04-12
 
