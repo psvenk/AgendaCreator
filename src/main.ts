@@ -108,18 +108,21 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 	(function(): void {
 		// TODO: don't create tHeadTr2 for output if dayDescs is empty
 		if (inputOrOutput == InputOrOutput.output) {
-			var theadTr2: HTMLTableRowElement = document.createElement("tr");
-			thead.appendChild(theadTr2);
-			theadTr2.appendChild(document.createElement("td"));
-			// Add a blank cell to the leftmost position
-			
-			for (let col: number = 1; col <= daysInWeek.length; col++) {
-				theadTr2.appendChild(document.createElement("th")).
-					textContent = dayDescs[col - 1];
+			if (typeof dayDescs != "undefined" &&
+			    trimArray(cloneArray(dayDescs)).length > 0) {
+				let theadTr2: HTMLTableRowElement = document.createElement("tr");
+				thead.appendChild(theadTr2);
+				theadTr2.appendChild(document.createElement("td"));
+				// Add a blank cell to the leftmost position
+				
+				for (let col: number = 1; col <= daysInWeek.length; col++) {
+					theadTr2.appendChild(document.createElement("th")).
+						textContent = dayDescs[col - 1];
+				}
 			}
 
 			for (let row: number = 1; row <= classes.length; row++) {
-				var tr: HTMLTableRowElement = document.createElement("tr");
+				let tr: HTMLTableRowElement = document.createElement("tr");
 				tbody.appendChild(tr);
 				// Create a row and add it to the <tbody>
 				
@@ -134,14 +137,14 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 			}
 		}
 		else { // if (inputOrOutput == InputOrOutput.input)
-			var theadTr2: HTMLTableRowElement = document.createElement("tr");
+			let theadTr2: HTMLTableRowElement = document.createElement("tr");
 			thead.appendChild(theadTr2);
 			theadTr2.appendChild(document.createElement("td"));
 			// Add a blank cell to the leftmost position
 			
 			for (let col: number = 1; col <= daysInWeek.length; col++)
 				(function() {
-					var input: HTMLInputElement =
+					let input: HTMLInputElement =
 						document.createElement("input");
 
 					if (typeof dayDescs[col - 1] != "undefined" &&
@@ -153,12 +156,12 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 				})();
 			for (let row: number = 1, maxRows: number = numClasses + 1;
 				 row <= maxRows; row++) {
-				var tr: HTMLTableRowElement = document.createElement("tr");
+				let tr: HTMLTableRowElement = document.createElement("tr");
 				tbody.appendChild(tr);
 				// Create a row and add it to the <tbody>
 				
 				if (row != maxRows) {
-					var input: HTMLInputElement =
+					let input: HTMLInputElement =
 						document.createElement("input");
 					
 					if (typeof classes[row - 1] != "undefined" &&
@@ -172,7 +175,7 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 				} else {
 					// If last row
 
-					var button: HTMLInputElement =
+					let button: HTMLInputElement =
 						document.createElement("input");
 					button.type = "button";
 					button.value = decodeEntities("Add more&hellip;");
@@ -185,13 +188,13 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 					// Add the button in the leftmost position
 					
 					button.addEventListener("click", function(): void {
-						var numRowsToAdd: number = parseInt(
+						let numRowsToAdd: number = parseInt(
 							prompt("How many rows would you like to add?"));
-						var numRowsExisting: number =
+						let numRowsExisting: number =
 							inputTable.getElementsByTagName("tr").length - 2;
 						/* Get number of rows already in table, subtract two to
 						   exclude header row and "Add more..." button */
-						var totalRows: number = numRowsExisting + numRowsToAdd;
+						let totalRows: number = numRowsExisting + numRowsToAdd;
 						
 						drawTable(daysInWeek, inputTable, InputOrOutput.input,
 								  readClasses(), totalRows, readDayDescs());
@@ -374,13 +377,30 @@ function readDayDescs(): string[] {
 	var dayDescs: string[] = new Array();
 	var inputs: HTMLCollectionOf<HTMLInputElement> =
 		inputTable.getElementsByTagName("tr")[1].getElementsByTagName("input");
-	for (let i = 0; i < inputs.length; i++) {
+	for (let i: number = 0; i < inputs.length; i++) {
 		let input: HTMLInputElement = inputs[i];
 		dayDescs.push(input.value);
 	}
 	return dayDescs;
 }
 
+/**
+ * Performs a shallow clone of an array.
+ * 
+ * @param {any[]} arr: The array to clone
+ * @return {any[]} A clone of `arr`
+ * 
+ * @author psvenk
+ * @license CC0-1.0 OR Apache-2.0+ OR MPL-2.0+
+ */
+function cloneArray(arr: any[]): any[] {
+	var len: number = arr.length;
+	var output: any[] = new Array(len);
+	for (let i: number = 0; i < len; i++) {
+		output[i] = arr[i];
+	}
+	return output;
+}
 
 /**
  * Removes all blank and undefined elements from a string array. This function
