@@ -429,10 +429,12 @@ function trimArray(arr: string[]): string[] {
  * This is the event listener for the "Generate output" button.
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ * @license Apache-2.0+ OR MPL-2.0+
  */
 document.getElementById("generate").addEventListener(
 	"click", function(): void {
+		document.getElementById("generate_more").style.display = "block";
+		
 		var classes: string[] = trimArray(readClasses());
 		
 		if (typeof classes != "undefined" && classes.length > 0) {
@@ -444,6 +446,41 @@ document.getElementById("generate").addEventListener(
 		}
 	}
 );
+
+/**
+ * This is the event listener for the "Print" button.
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+/*document.getElementById("print").addEventListener("click", function(): void {
+	let printWindow: Window = window.open("./index.html", "printwindow");
+	printWindow.document.write();
+	let rootEl: HTMLHtmlElement = printWindow.document.createElement("html");
+	
+	let head: HTMLHeadElement = printWindow.document.createElement("head");
+	rootEl.appendChild(head);
+	let cssLink: HTMLLinkElement = printWindow.document.createElement("link");
+	cssLink.rel = "stylesheet";
+	cssLink.type = "text/css";
+	
+	let body: HTMLBodyElement = printWindow.document.createElement("body");
+	rootEl.appendChild(body);
+	let table: HTMLTableElement = printWindow.document.createElement("table");
+	table.innerHTML = outputTable.innerHTML;
+	body.appendChild(table);
+	
+	//printWindow.document.close();
+	printWindow.focus();
+	printWindow.print();
+	// printWindow.close();
+	// https://stackoverflow.com/a/20101483/
+	// https://stackoverflow.com/a/6040795/
+});*/
+
+document.getElementById("print").addEventListener("click", function(): void {
+	window.print();
+});
 
 /**
  * This method stores in a JSON string the data that the user entered into
