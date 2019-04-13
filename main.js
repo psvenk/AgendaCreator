@@ -39,6 +39,11 @@ function decodeEntities(encodedString) {
     return textArea.value;
 }
 var InputOrOutput = { "input": true, "output": false };
+var DaysInWeek = {
+    "5": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    "7": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+        "Sunday"]
+};
 /**
  * Draws a table with the elements of `daysInWeek` as column headers and
  * the elements of `classes` as row headers.
@@ -51,11 +56,14 @@ var InputOrOutput = { "input": true, "output": false };
  * @param {boolean} inputOrOutput: Either InputOrOutput.input or
  * 		InputOrOutput.output, depending on whether `table` is the input table
  * 		or the output table.
- * @param {string[]} classes: An array containing the row headers for the table,
- * 		if inputOrOutput == InputOrOutput.output, or the default values of the
- * 		<input> tags in the table, if inputOrOutput == InputOrOutput.input.
- * @param {number} numClasses: The number of <input>s to include, if
+ * @param {string[]} [classes]: An array containing the row headers for the
+ * 		table, if inputOrOutput == InputOrOutput.output, or the default values of
+ * 		the <input> tags in the table, if inputOrOutput == InputOrOutput.input.
+ * @param {number} [numClasses=4]: The number of <input>s to include, if
  * 		inputOrOutput == InputOrOutput.input.
+ * @param {string[]} [dayDescs]: An array containing descriptions for each day,
+ * 		to be included below the days of the week. The indices of this array
+ * 		correspond to the indices in daysInWeek.
  *
  * precondition: `table` is in the DOM
  *
@@ -65,9 +73,10 @@ var InputOrOutput = { "input": true, "output": false };
  * @author psvenk
  * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
-function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
+function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses, dayDescs) {
     if (classes === void 0) { classes = []; }
     if (numClasses === void 0) { numClasses = 4; }
+    if (dayDescs === void 0) { dayDescs = []; }
     table.innerHTML = "";
     // Clear table
     var thead = document.createElement("thead");
@@ -78,18 +87,32 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
     thead.appendChild(theadTr);
     table.appendChild(tbody);
     theadTr.appendChild(document.createElement("td"));
-    // Add a blank cell to the leftmost position
-    for (var col = 1; col <= daysInWeek.length; col++)
+    var _loop_1 = function (col) {
         (function () {
-            /* IIFE (http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
-               to limit scope */
             var currentTh = document.createElement("th");
             currentTh.textContent = daysInWeek[col - 1];
             theadTr.appendChild(currentTh);
         })();
+    };
+    // Add a blank cell to the leftmost position
+    for (var col = 1; col <= daysInWeek.length; col++) {
+        _loop_1(col);
+    }
     // Populate header
     (function () {
-        if (inputOrOutput == InputOrOutput.output)
+        // TODO: don't create tHeadTr2 for output if dayDescs is empty
+        if (inputOrOutput == InputOrOutput.output) {
+            if (typeof dayDescs != "undefined" &&
+                trimArray(cloneArray(dayDescs)).length > 0) {
+                var theadTr2 = document.createElement("tr");
+                thead.appendChild(theadTr2);
+                theadTr2.appendChild(document.createElement("td"));
+                // Add a blank cell to the leftmost position
+                for (var col = 1; col <= daysInWeek.length; col++) {
+                    theadTr2.appendChild(document.createElement("th")).
+                        textContent = dayDescs[col - 1];
+                }
+            }
             for (var row = 1; row <= classes.length; row++) {
                 var tr = document.createElement("tr");
                 tbody.appendChild(tr);
@@ -102,7 +125,25 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
                 }
                 // Create remaining cells
             }
-        else // if (inputOrOutput == InputOrOutput.input)
+        }
+        else { // if (inputOrOutput == InputOrOutput.input)
+            var theadTr2_1 = document.createElement("tr");
+            thead.appendChild(theadTr2_1);
+            theadTr2_1.appendChild(document.createElement("td"));
+            var _loop_2 = function (col) {
+                (function () {
+                    var input = document.createElement("input");
+                    if (typeof dayDescs[col - 1] != "undefined" &&
+                        dayDescs.length > 0)
+                        input.value = dayDescs[col - 1];
+                    theadTr2_1.appendChild(document.createElement("th")).
+                        appendChild(input);
+                })();
+            };
+            // Add a blank cell to the leftmost position
+            for (var col = 1; col <= daysInWeek.length; col++) {
+                _loop_2(col);
+            }
             for (var row = 1, maxRows = numClasses + 1; row <= maxRows; row++) {
                 var tr = document.createElement("tr");
                 tbody.appendChild(tr);
@@ -132,7 +173,7 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
                         /* Get number of rows already in table, subtract two to
                            exclude header row and "Add more..." button */
                         var totalRows = numRowsExisting + numRowsToAdd;
-                        drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), totalRows);
+                        drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), totalRows, readDayDescs());
                     });
                     // Add event listener for "Add more..." button
                 }
@@ -141,6 +182,7 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses) {
                 }
                 // Create remaining cells
             }
+        }
     })();
     // Create more rows and populate them
 }
@@ -182,7 +224,7 @@ function setCustomDays(daysRaw) {
         */
     }
     daysInWeek = days;
-    drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 2);
+    drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 3, readDayDescs());
     document.getElementById("customDays").value =
         daysRaw;
 }
@@ -220,9 +262,9 @@ document.getElementById("daysInWeek").addEventListener("click", function () {
         case "5": {
             daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
                 "Friday"];
-            drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 2);
-            /* Get number of rows already in table, subtract two to exclude
-               header row and "Add more..." button */
+            drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 3, readDayDescs());
+            /* Get number of rows already in table, subtract three to exclude
+               header rows and "Add more..." button */
             document.getElementById("customDays_more").style.display =
                 "none";
             break;
@@ -230,7 +272,7 @@ document.getElementById("daysInWeek").addEventListener("click", function () {
         case "7": {
             daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
                 "Friday", "Saturday", "Sunday"];
-            drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 2);
+            drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 3, readDayDescs());
             document.getElementById("customDays_more").style.display =
                 "none";
             break;
@@ -261,7 +303,7 @@ document.getElementById("setCustomDays").addEventListener("click", function () {
 function readClasses() {
     var classes = new Array();
     var rows = inputTable.getElementsByTagName("tr");
-    for (var i = 1; i < rows.length - 1; i++) {
+    for (var i = 2; i < rows.length - 1; i++) {
         var input = rows[i].getElementsByTagName("td")[0]
             .getElementsByTagName("input")[0];
         classes.push(input.value);
@@ -269,6 +311,42 @@ function readClasses() {
     // i is initially 1 so that the header row is ignored, and stops
     // at the penultimate row so that the "Add more..." button is ignored.
     return classes;
+}
+/**
+ * Reads the day descriptions below the days of the week entered into the <input>
+ * fields in the input table, and returns them in an array.
+ *
+ * @return {string[]} An array consisting of all of the values in the input
+ * 		fields
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+function readDayDescs() {
+    var dayDescs = new Array();
+    var inputs = inputTable.getElementsByTagName("tr")[1].getElementsByTagName("input");
+    for (var i = 0; i < inputs.length; i++) {
+        var input = inputs[i];
+        dayDescs.push(input.value);
+    }
+    return dayDescs;
+}
+/**
+ * Performs a shallow clone of an array.
+ *
+ * @param {any[]} arr: The array to clone
+ * @return {any[]} A clone of `arr`
+ *
+ * @author psvenk
+ * @license CC0-1.0 OR Apache-2.0+ OR MPL-2.0+
+ */
+function cloneArray(arr) {
+    var len = arr.length;
+    var output = new Array(len);
+    for (var i = 0; i < len; i++) {
+        output[i] = arr[i];
+    }
+    return output;
 }
 /**
  * Removes all blank and undefined elements from a string array. This function
@@ -296,15 +374,50 @@ function trimArray(arr) {
  * This is the event listener for the "Generate output" button.
  *
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ * @license Apache-2.0+ OR MPL-2.0+
  */
 document.getElementById("generate").addEventListener("click", function () {
-    var classes = readClasses();
-    trimArray(classes);
-    if (typeof classes != "undefined" && classes.length > 0)
-        drawTable(daysInWeek, outputTable, InputOrOutput.output, classes);
-    else
+    document.getElementById("generate_more").style.display = "block";
+    var classes = trimArray(readClasses());
+    if (typeof classes != "undefined" && classes.length > 0) {
+        drawTable(daysInWeek, outputTable, InputOrOutput.output, classes, classes.length, readDayDescs());
+    }
+    else {
         outputTable.innerHTML = "";
+    }
+});
+/**
+ * This is the event listener for the "Print" button.
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+/*document.getElementById("print").addEventListener("click", function(): void {
+    let printWindow: Window = window.open("./index.html", "printwindow");
+    printWindow.document.write();
+    let rootEl: HTMLHtmlElement = printWindow.document.createElement("html");
+    
+    let head: HTMLHeadElement = printWindow.document.createElement("head");
+    rootEl.appendChild(head);
+    let cssLink: HTMLLinkElement = printWindow.document.createElement("link");
+    cssLink.rel = "stylesheet";
+    cssLink.type = "text/css";
+    
+    let body: HTMLBodyElement = printWindow.document.createElement("body");
+    rootEl.appendChild(body);
+    let table: HTMLTableElement = printWindow.document.createElement("table");
+    table.innerHTML = outputTable.innerHTML;
+    body.appendChild(table);
+    
+    //printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    // printWindow.close();
+    // https://stackoverflow.com/a/20101483/
+    // https://stackoverflow.com/a/6040795/
+});*/
+document.getElementById("print").addEventListener("click", function () {
+    window.print();
 });
 /**
  * This method stores in a JSON string the data that the user entered into
@@ -317,10 +430,11 @@ document.getElementById("generate").addEventListener("click", function () {
  */
 function serialize() {
     var obj = {};
-    obj.version = "0.1.3";
-    // The Node.js build script will change "0.1.3" to the current version
+    obj.version = "0.2.0";
+    // The Node.js build script will change "0.2.0" to the current version
     obj.classes = readClasses();
     obj.daysInWeek = daysInWeek;
+    obj.dayDescs = readDayDescs();
     return JSON.stringify(obj); // TODO: Add JSON polyfill
 }
 // TODO: document this method (JSDoc)
@@ -337,7 +451,7 @@ function serialize() {
 function deserialize(JsonInput) {
     var obj = JSON.parse(JsonInput);
     daysInWeek = obj.daysInWeek;
-    drawTable(daysInWeek, inputTable, InputOrOutput.input, obj.classes, obj.classes.length);
+    drawTable(daysInWeek, inputTable, InputOrOutput.input, obj.classes, obj.classes.length, obj.dayDescs);
     if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
         "Friday"]) {
         document.getElementById("daysInWeek").value = "5";
@@ -414,6 +528,5 @@ document.getElementById("import_upload").addEventListener("click", function () {
     reader.readAsText(file);
     reader.addEventListener("load", function () {
         deserialize(reader.result);
-        // TODO: change to "load" event, see FileReader on MDN
     });
 });
