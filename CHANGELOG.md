@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project partially adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.2.0 - 2019-04-13
+
+- `[+]` Added support for day descriptions (adding the name of some holiday or event below the name of a day of the week)
+- `[*]` Changed `var` to `let` or `const` in some places in the TypeScript code to limit scope (this does not transfer to the compiled JavaScript, so compatibility with older browsers is not broken because of this)
+
 ## 0.1.4 - 2019-04-12
 
 - `[*]` Changed changelog formatting

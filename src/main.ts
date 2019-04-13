@@ -41,7 +41,13 @@ function decodeEntities(encodedString: string): string {
 	return textArea.value;
 }
 
-var InputOrOutput: any = {"input": true, "output": false};
+const InputOrOutput: any = {"input": true, "output": false};
+
+const DaysInWeek: any = {
+	"5": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+	"7": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+	      "Sunday"]
+};
 
 /**
  * Draws a table with the elements of `daysInWeek` as column headers and
@@ -55,11 +61,14 @@ var InputOrOutput: any = {"input": true, "output": false};
  * @param {boolean} inputOrOutput: Either InputOrOutput.input or
  * 		InputOrOutput.output, depending on whether `table` is the input table
  * 		or the output table.
- * @param {string[]} classes: An array containing the row headers for the table,
- * 		if inputOrOutput == InputOrOutput.output, or the default values of the
- * 		<input> tags in the table, if inputOrOutput == InputOrOutput.input.
- * @param {number} numClasses: The number of <input>s to include, if
+ * @param {string[]} [classes]: An array containing the row headers for the
+ * 		table, if inputOrOutput == InputOrOutput.output, or the default values of
+ * 		the <input> tags in the table, if inputOrOutput == InputOrOutput.input.
+ * @param {number} [numClasses=4]: The number of <input>s to include, if
  * 		inputOrOutput == InputOrOutput.input.
+ * @param {string[]} [dayDescs]: An array containing descriptions for each day,
+ * 		to be included below the days of the week. The indices of this array
+ * 		correspond to the indices in daysInWeek.
  * 
  * precondition: `table` is in the DOM
  * 
@@ -71,7 +80,7 @@ var InputOrOutput: any = {"input": true, "output": false};
  */
 function drawTable(daysInWeek: string[], table: HTMLTableElement,
 				   inputOrOutput: boolean, classes: string[] = [],
-				   numClasses: number = 4): void {
+				   numClasses: number = 4, dayDescs: string[] = []): void {
 	
 	table.innerHTML = "";
 	// Clear table
@@ -88,19 +97,28 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 	theadTr.appendChild(document.createElement("td"));
 	// Add a blank cell to the leftmost position
 	
-	for (var col: number = 1; col <= daysInWeek.length; col++) (function() {
-		/* IIFE (http://benalman.com/news/2010/11/immediately-invoked-function-expression/)
-		   to limit scope */
-
+	for (let col: number = 1; col <= daysInWeek.length; col++) (function() {
 		var currentTh: HTMLTableHeaderCellElement =
 			document.createElement("th");
 		currentTh.textContent = daysInWeek[col - 1];
 		theadTr.appendChild(currentTh);
 	})();
 	// Populate header
+	
 	(function(): void {
-		if (inputOrOutput == InputOrOutput.output)
-			for (var row: number = 1; row <= classes.length; row++) {
+		// TODO: don't create tHeadTr2 for output if dayDescs is empty
+		if (inputOrOutput == InputOrOutput.output) {
+			var theadTr2: HTMLTableRowElement = document.createElement("tr");
+			thead.appendChild(theadTr2);
+			theadTr2.appendChild(document.createElement("td"));
+			// Add a blank cell to the leftmost position
+			
+			for (let col: number = 1; col <= daysInWeek.length; col++) {
+				theadTr2.appendChild(document.createElement("th")).
+					textContent = dayDescs[col - 1];
+			}
+
+			for (let row: number = 1; row <= classes.length; row++) {
 				var tr: HTMLTableRowElement = document.createElement("tr");
 				tbody.appendChild(tr);
 				// Create a row and add it to the <tbody>
@@ -109,14 +127,31 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 					classes[row - 1];
 				// Add the name of the current class in the leftmost position
 				
-				for (var col: number = 1; col <= daysInWeek.length; col++) {
+				for (let col: number = 1; col <= daysInWeek.length; col++) {
 					tr.appendChild(document.createElement("td"));
 				}
 				// Create remaining cells
 			}
-		
-		else // if (inputOrOutput == InputOrOutput.input)
-			for (var row: number = 1, maxRows: number = numClasses + 1;
+		}
+		else { // if (inputOrOutput == InputOrOutput.input)
+			var theadTr2: HTMLTableRowElement = document.createElement("tr");
+			thead.appendChild(theadTr2);
+			theadTr2.appendChild(document.createElement("td"));
+			// Add a blank cell to the leftmost position
+			
+			for (let col: number = 1; col <= daysInWeek.length; col++)
+				(function() {
+					var input: HTMLInputElement =
+						document.createElement("input");
+
+					if (typeof dayDescs[col - 1] != "undefined" &&
+						dayDescs.length > 0)
+						input.value = dayDescs[col - 1];
+
+					theadTr2.appendChild(document.createElement("th")).
+						appendChild(input);
+				})();
+			for (let row: number = 1, maxRows: number = numClasses + 1;
 				 row <= maxRows; row++) {
 				var tr: HTMLTableRowElement = document.createElement("tr");
 				tbody.appendChild(tr);
@@ -159,16 +194,17 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 						var totalRows: number = numRowsExisting + numRowsToAdd;
 						
 						drawTable(daysInWeek, inputTable, InputOrOutput.input,
-								  readClasses(), totalRows);
+								  readClasses(), totalRows, readDayDescs());
 					});
 					// Add event listener for "Add more..." button
 				}
 				
-				for (var col: number = 1; col <= daysInWeek.length; col++) {
+				for (let col: number = 1; col <= daysInWeek.length; col++) {
 					tr.appendChild(document.createElement("td"));
 				}
 				// Create remaining cells
 			}
+		}
 	})();
 	// Create more rows and populate them
 }
@@ -201,7 +237,7 @@ function setCustomDays(daysRaw: string): void {
 	  but does not split when "\," is encountered
 	  https://stackoverflow.com/questions/14333706/how-can-i-use-javascript-split-method-using-escape-character
 	*/
-	for (var i = 0; i < days.length; i++) {
+	for (let i = 0; i < days.length; i++) {
 		days[i] = days[i].replace(/^\s+|\s+$/gm,"")
 			.replace(/\\,/g, ",");
 		/*
@@ -218,8 +254,8 @@ function setCustomDays(daysRaw: string): void {
 	}
 	daysInWeek = days;
 	drawTable(daysInWeek, inputTable, InputOrOutput.input,
-	          readClasses(),
-	          inputTable.getElementsByTagName("tr").length - 2);
+	          readClasses(), inputTable.getElementsByTagName("tr").length - 3,
+	          readDayDescs());
 	(document.getElementById("customDays") as HTMLInputElement).value =
 		daysRaw;
 }
@@ -239,7 +275,7 @@ function setCustomDays(daysRaw: string): void {
 function getCustomDays(days ?: string[]): string {
 	if (typeof days == "undefined" || days.length == 0) days = daysInWeek;
 	var output: string = "";
-	for (var i = 0; i < days.length; i++) {
+	for (let i = 0; i < days.length; i++) {
 		output += days[i].replace(/,/g, "\\,");
 		if (i != days.length - 1) output += ", ";
 	}
@@ -260,9 +296,10 @@ document.getElementById("daysInWeek").addEventListener(
 							  "Friday"];
 				drawTable(daysInWeek, inputTable, InputOrOutput.input,
 						  readClasses(),
-						  inputTable.getElementsByTagName("tr").length - 2);
-				/* Get number of rows already in table, subtract two to exclude
-				   header row and "Add more..." button */
+						  inputTable.getElementsByTagName("tr").length - 3,
+				          readDayDescs());
+				/* Get number of rows already in table, subtract three to exclude
+				   header rows and "Add more..." button */
 				document.getElementById("customDays_more").style.display =
 					"none";
 				break;
@@ -272,7 +309,8 @@ document.getElementById("daysInWeek").addEventListener(
 							  "Friday", "Saturday", "Sunday"];
 				drawTable(daysInWeek, inputTable, InputOrOutput.input,
 						  readClasses(),
-						  inputTable.getElementsByTagName("tr").length - 2);
+						  inputTable.getElementsByTagName("tr").length - 3,
+				          readDayDescs());
 				document.getElementById("customDays_more").style.display =
 					"none";
 				break;
@@ -311,7 +349,7 @@ function readClasses(): string[] {
 	var classes: string[] = new Array();
 	var rows: HTMLCollectionOf<HTMLTableRowElement> =
 		inputTable.getElementsByTagName("tr");
-	for (var i = 1; i < rows.length - 1; i++) {
+	for (let i = 2; i < rows.length - 1; i++) {
 		var input: HTMLInputElement = rows[i].getElementsByTagName("td")[0]
 			.getElementsByTagName("input")[0];
 		classes.push(input.value);
@@ -321,6 +359,28 @@ function readClasses(): string[] {
 	
 	return classes;
 }
+
+/**
+ * Reads the day descriptions below the days of the week entered into the <input>
+ * fields in the input table, and returns them in an array.
+ * 
+ * @return {string[]} An array consisting of all of the values in the input
+ * 		fields
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+function readDayDescs(): string[] {
+	var dayDescs: string[] = new Array();
+	var inputs: HTMLCollectionOf<HTMLInputElement> =
+		inputTable.getElementsByTagName("tr")[1].getElementsByTagName("input");
+	for (let i = 0; i < inputs.length; i++) {
+		let input: HTMLInputElement = inputs[i];
+		dayDescs.push(input.value);
+	}
+	return dayDescs;
+}
+
 
 /**
  * Removes all blank and undefined elements from a string array. This function
@@ -334,7 +394,7 @@ function readClasses(): string[] {
  * @license Apache-2.0+ OR MPL-2.0+ OR MIT
  */
 function trimArray(arr: string[]): string[] {
-	for (var i = 0; i < arr.length; i++) {
+	for (let i = 0; i < arr.length; i++) {
 		if (typeof arr[i] == "undefined" || arr[i] == "") {
 			arr.splice(i, 1);
 			i--;
@@ -353,13 +413,15 @@ function trimArray(arr: string[]): string[] {
  */
 document.getElementById("generate").addEventListener(
 	"click", function(): void {
-		var classes: string[] = readClasses();
-		trimArray(classes);
+		var classes: string[] = trimArray(readClasses());
 		
-		if (typeof classes != "undefined" && classes.length > 0)
-			drawTable(daysInWeek, outputTable, InputOrOutput.output, classes);
-		else
+		if (typeof classes != "undefined" && classes.length > 0) {
+			drawTable(daysInWeek, outputTable, InputOrOutput.output, classes,
+			          classes.length, readDayDescs());
+		}
+		else {
 			outputTable.innerHTML = "";
+		}
 	}
 );
 
@@ -378,6 +440,7 @@ function serialize(): string {
 	// The Node.js build script will change "VERSION" to the current version
 	obj.classes = readClasses();
 	obj.daysInWeek = daysInWeek;
+	obj.dayDescs = readDayDescs();
 	return JSON.stringify(obj); // TODO: Add JSON polyfill
 }
 
@@ -396,7 +459,7 @@ function deserialize(JsonInput: string): void {
 	var obj: any = JSON.parse(JsonInput);
 	daysInWeek = obj.daysInWeek;
 	drawTable(daysInWeek, inputTable, InputOrOutput.input, obj.classes,
-	          obj.classes.length);
+	          obj.classes.length, obj.dayDescs);
 	if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
 	                        "Friday"]) {
 		(document.getElementById("daysInWeek") as HTMLInputElement).value = "5";
@@ -490,7 +553,6 @@ document.getElementById("import_upload").addEventListener(
 		reader.readAsText(file);
 		reader.addEventListener("load", function(): void {
 			deserialize(reader.result as string);
-			// TODO: change to "load" event, see FileReader on MDN
 		});
 	}
 );
