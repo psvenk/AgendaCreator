@@ -79,44 +79,41 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses, dayDes
     if (dayDescs === void 0) { dayDescs = []; }
     table.innerHTML = "";
     // Clear table
-    var thead = document.createElement("thead");
-    var theadTr = document.createElement("tr");
-    var tbody = document.createElement("tbody");
-    // Create <thead> and <tbody>, and the <tr> that will be placed in <thead>
-    table.appendChild(thead);
-    thead.appendChild(theadTr);
-    table.appendChild(tbody);
-    theadTr.appendChild(document.createElement("td"));
+    // TODO: clear table in a more compatible way https://stackoverflow.com/a/1344475
+    var headerRow = document.createElement("tr");
+    headerRow.className += " header";
+    table.appendChild(headerRow);
+    headerRow.appendChild(document.createElement("td"));
     var _loop_1 = function (col) {
         (function () {
             var currentTh = document.createElement("th");
             currentTh.textContent = daysInWeek[col - 1];
-            theadTr.appendChild(currentTh);
+            headerRow.appendChild(currentTh);
         })();
     };
     // Add a blank cell to the leftmost position
     for (var col = 1; col <= daysInWeek.length; col++) {
         _loop_1(col);
     }
-    // Populate header
+    // Populate header row
     (function () {
-        // TODO: don't create tHeadTr2 for output if dayDescs is empty
         if (inputOrOutput == InputOrOutput.output) {
             if (typeof dayDescs != "undefined" &&
                 trimArray(cloneArray(dayDescs)).length > 0) {
-                var theadTr2 = document.createElement("tr");
-                thead.appendChild(theadTr2);
-                theadTr2.appendChild(document.createElement("td"));
+                var headerRow2 = document.createElement("tr");
+                headerRow2.className += " header";
+                table.appendChild(headerRow2);
+                headerRow2.appendChild(document.createElement("td"));
                 // Add a blank cell to the leftmost position
                 for (var col = 1; col <= daysInWeek.length; col++) {
-                    theadTr2.appendChild(document.createElement("th")).
+                    headerRow2.appendChild(document.createElement("th")).
                         textContent = dayDescs[col - 1];
                 }
             }
             for (var row = 1; row <= classes.length; row++) {
                 var tr = document.createElement("tr");
-                tbody.appendChild(tr);
-                // Create a row and add it to the <tbody>
+                table.appendChild(tr);
+                // Create a row and add it to the table
                 tr.appendChild(document.createElement("td")).textContent =
                     classes[row - 1];
                 // Add the name of the current class in the leftmost position
@@ -127,16 +124,17 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses, dayDes
             }
         }
         else { // if (inputOrOutput == InputOrOutput.input)
-            var theadTr2_1 = document.createElement("tr");
-            thead.appendChild(theadTr2_1);
-            theadTr2_1.appendChild(document.createElement("td"));
+            var headerRow2_1 = document.createElement("tr");
+            table.appendChild(headerRow2_1);
+            headerRow2_1.className += " header";
+            headerRow2_1.appendChild(document.createElement("td"));
             var _loop_2 = function (col) {
                 (function () {
                     var input = document.createElement("input");
                     if (typeof dayDescs[col - 1] != "undefined" &&
                         dayDescs.length > 0)
                         input.value = dayDescs[col - 1];
-                    theadTr2_1.appendChild(document.createElement("th")).
+                    headerRow2_1.appendChild(document.createElement("th")).
                         appendChild(input);
                 })();
             };
@@ -146,8 +144,8 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses, dayDes
             }
             for (var row = 1, maxRows = numClasses + 1; row <= maxRows; row++) {
                 var tr = document.createElement("tr");
-                tbody.appendChild(tr);
-                // Create a row and add it to the <tbody>
+                table.appendChild(tr);
+                // Create a row and add it to the table
                 if (row != maxRows) {
                     var input = document.createElement("input");
                     if (typeof classes[row - 1] != "undefined" &&
@@ -430,8 +428,8 @@ document.getElementById("print").addEventListener("click", function () {
  */
 function serialize() {
     var obj = {};
-    obj.version = "0.2.0";
-    // The Node.js build script will change "0.2.0" to the current version
+    obj.version = "0.2.1";
+    // The Node.js build script will change "0.2.1" to the current version
     obj.classes = readClasses();
     obj.daysInWeek = daysInWeek;
     obj.dayDescs = readDayDescs();
@@ -481,7 +479,8 @@ document.getElementById("export").addEventListener("click", function () {
     var export_more = document.getElementById("export_more");
     export_more.style.display =
         export_more.style.display == "none" ? "block" : "none";
-    document.getElementById("export_output").value = serialize();
+    document.getElementById("export_output").value =
+        serialize();
 });
 /**
  * This is the event listener for the "Download JSON" button (only visible after

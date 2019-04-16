@@ -13,22 +13,47 @@ more details.
 SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+ OR MIT
 */
 
-/* Adapted from https://stackoverflow.com/a/2618980/ */
 body * {
-	visibility: hidden;
+	display: none;
 }
 
-#outputTable, #outputTable * {
-	visibility: visible;
+#outputTableHeading, #outputTableHeading * {
+	display: block;
+	margin: 0;
+}
+
+#outputTableHeading {
+	height: 10%;
+	top: 0;
+	left: 0;
+	vertical-align: top;
+}
+
+.center {
+	text-align: center;
 }
 
 #outputTable {
+	display: table;
 	position: absolute;
+	top: 10%;
 	left: 0;
-	top: 0;
+	width: 100%;
+	height: 90%;
+}
+
+#outputTable tr {display: table-row;}
+#outputTable td, #outputTable th {display: table-cell;}
+
+#outputTable tr.header {
+	height: 10%;
 }
 
 table, th, td {
 	border: 1px solid black;
 	border-collapse: collapse;
+}
+
+@page {
+	size: landscape;
 }
