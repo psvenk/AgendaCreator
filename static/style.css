@@ -30,3 +30,11 @@ table, th, td {
 #copyright {
 	width: 40em;
 }
+
+#outputTableHeading {
+	display: none;
+}
+
+.center {
+	text-align: center;
+}

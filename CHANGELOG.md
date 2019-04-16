@@ -7,6 +7,8 @@ and this project partially adheres to [Semantic Versioning](https://semver.org/s
 ## 0.2.1 - 2019-_____
 
 - `[+]` Table now fills page when printing
+- `[+]` AgendaCreator is now valid XHTML 1.0 Transitional
+- `[+]` Added heading when printing
 
 ## 0.2.0 - 2019-04-13
 

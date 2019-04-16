@@ -84,47 +84,43 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 	
 	table.innerHTML = "";
 	// Clear table
+	// TODO: clear table in a more compatible way https://stackoverflow.com/a/1344475
 	
-	var thead: HTMLTableSectionElement = document.createElement("thead");
-	var theadTr: HTMLTableRowElement = document.createElement("tr");
-	var tbody: HTMLTableSectionElement = document.createElement("tbody");
-	// Create <thead> and <tbody>, and the <tr> that will be placed in <thead>
-	
-	table.appendChild(thead);
-	thead.appendChild(theadTr);
-	table.appendChild(tbody);
-	
-	theadTr.appendChild(document.createElement("td"));
+	var headerRow: HTMLTableRowElement = document.createElement("tr");
+	headerRow.className += " header";
+	table.appendChild(headerRow);
+	headerRow.appendChild(document.createElement("td"));
 	// Add a blank cell to the leftmost position
 	
 	for (let col: number = 1; col <= daysInWeek.length; col++) (function() {
 		var currentTh: HTMLTableHeaderCellElement =
 			document.createElement("th");
 		currentTh.textContent = daysInWeek[col - 1];
-		theadTr.appendChild(currentTh);
+		headerRow.appendChild(currentTh);
 	})();
-	// Populate header
+	// Populate header row
 	
 	(function(): void {
-		// TODO: don't create tHeadTr2 for output if dayDescs is empty
 		if (inputOrOutput == InputOrOutput.output) {
 			if (typeof dayDescs != "undefined" &&
 			    trimArray(cloneArray(dayDescs)).length > 0) {
-				let theadTr2: HTMLTableRowElement = document.createElement("tr");
-				thead.appendChild(theadTr2);
-				theadTr2.appendChild(document.createElement("td"));
+				let headerRow2: HTMLTableRowElement =
+					document.createElement("tr");
+				headerRow2.className += " header";
+				table.appendChild(headerRow2);
+				headerRow2.appendChild(document.createElement("td"));
 				// Add a blank cell to the leftmost position
 				
 				for (let col: number = 1; col <= daysInWeek.length; col++) {
-					theadTr2.appendChild(document.createElement("th")).
+					headerRow2.appendChild(document.createElement("th")).
 						textContent = dayDescs[col - 1];
 				}
 			}
 
 			for (let row: number = 1; row <= classes.length; row++) {
 				let tr: HTMLTableRowElement = document.createElement("tr");
-				tbody.appendChild(tr);
-				// Create a row and add it to the <tbody>
+				table.appendChild(tr);
+				// Create a row and add it to the table
 				
 				tr.appendChild(document.createElement("td")).textContent =
 					classes[row - 1];
@@ -137,9 +133,10 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 			}
 		}
 		else { // if (inputOrOutput == InputOrOutput.input)
-			let theadTr2: HTMLTableRowElement = document.createElement("tr");
-			thead.appendChild(theadTr2);
-			theadTr2.appendChild(document.createElement("td"));
+			let headerRow2: HTMLTableRowElement = document.createElement("tr");
+			table.appendChild(headerRow2);
+			headerRow2.className += " header";
+			headerRow2.appendChild(document.createElement("td"));
 			// Add a blank cell to the leftmost position
 			
 			for (let col: number = 1; col <= daysInWeek.length; col++)
@@ -151,14 +148,14 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 						dayDescs.length > 0)
 						input.value = dayDescs[col - 1];
 
-					theadTr2.appendChild(document.createElement("th")).
+					headerRow2.appendChild(document.createElement("th")).
 						appendChild(input);
 				})();
 			for (let row: number = 1, maxRows: number = numClasses + 1;
 				 row <= maxRows; row++) {
 				let tr: HTMLTableRowElement = document.createElement("tr");
-				tbody.appendChild(tr);
-				// Create a row and add it to the <tbody>
+				table.appendChild(tr);
+				// Create a row and add it to the table
 				
 				if (row != maxRows) {
 					let input: HTMLInputElement =

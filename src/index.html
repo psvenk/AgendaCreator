@@ -10,10 +10,11 @@ See file `COPYING` for more details.
 SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
 -->
 
-<!DOCTYPE html>
-<html lang="en-US" xml:lang="en-US">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
 	<head>
-		<meta charset="UTF-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>AgendaCreator</title>
 		<link rel="stylesheet" type="text/css" href="style.css" />
 		<link rel="stylesheet" type="text/css" href="print.css" media="print" />
@@ -35,7 +36,7 @@ SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
 		</div>
 		<br /><br />
 		<table id="inputTable">
-			<tr>
+			<tr class="header">
 				<td></td>
 				<th>Monday</th>
 				<th>Tuesday</th>
@@ -92,10 +93,13 @@ SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
 		<input type="button" id="generate" value="Generate output" />
 		<div id="generate_more" style="display:none">
 			<br /><br />
+			<div class="center" id="outputTableHeading">
+				<h2>Agenda</h2>
+			</div>
 			<table id="outputTable"><tr><td></td></tr></table>
 			<!-- There are <tr> and <td> tags so that this is valid XHTML -->
 			<br />
-			<input type="button" id="print" value="Print"></input>
+			<input type="button" id="print" value="Print" />
 		</div>
 		<br /><br /><br />
 		
@@ -137,6 +141,14 @@ SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
 			<a href="https://github.com/psvenk/AgendaCreator">
 				its Git repository</a>,
 			hosted on GitHub.
+		</p>
+
+		<p>
+			<a href="http://validator.w3.org/check?uri=https%3A%2F%2Fpsvenk.github.io/AgendaCreator/">
+				<img src="valid-xhtml10.png" alt="Valid XHTML 1.0 Transitional"
+				     title="Valid XHTML 1.0 Transitional"
+				     height="31" width="88" />
+			</a>
 		</p>
 		
 		<!-- TODO: move this to head and call onload functions on load -->
