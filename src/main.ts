@@ -548,7 +548,8 @@ document.getElementById("export").addEventListener(
 		var export_more: HTMLElement = document.getElementById("export_more");
 		export_more.style.display =
 			export_more.style.display == "none" ? "block" : "none";
-		(document.getElementById("export_output") as HTMLTextAreaElement).value = serialize();
+		(document.getElementById("export_output") as HTMLTextAreaElement).value =
+			serialize();
 	}
 );
 
