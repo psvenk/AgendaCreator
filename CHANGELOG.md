@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project partially adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.2.3 - 2019-04-16
+
+- `[*]` Fixed unescaped ampersand in a URL, which caused the HTML document to stop being valid XHTML
+
 ## 0.2.2 - 2019-04-16
 
 - `[+]` Added "Valid CSS" icon to complement the "Valid XHTML" icon
