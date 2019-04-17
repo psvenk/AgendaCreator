@@ -44,6 +44,7 @@ var DaysInWeek = {
     "7": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
         "Sunday"]
 };
+var numHeaderRows = 2;
 /**
  * Draws a table with the elements of `daysInWeek` as column headers and
  * the elements of `classes` as row headers.
@@ -167,9 +168,10 @@ function drawTable(daysInWeek, table, inputOrOutput, classes, numClasses, dayDes
                     // Add the button in the leftmost position
                     button.addEventListener("click", function () {
                         var numRowsToAdd = parseInt(prompt("How many rows would you like to add?"));
-                        var numRowsExisting = inputTable.getElementsByTagName("tr").length - 2;
-                        /* Get number of rows already in table, subtract two to
-                           exclude header row and "Add more..." button */
+                        var numRowsExisting = inputTable.getElementsByTagName("tr").length -
+                            (numHeaderRows + 1);
+                        /* Get number of rows already in table, subtract to
+                           exclude header rows and "Add more..." button */
                         var totalRows = numRowsExisting + numRowsToAdd;
                         drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), totalRows, readDayDescs());
                     });
@@ -222,7 +224,7 @@ function setCustomDays(daysRaw) {
         */
     }
     daysInWeek = days;
-    drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 3, readDayDescs());
+    drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - (numHeaderRows + 1), readDayDescs());
     document.getElementById("customDays").value =
         daysRaw;
 }
@@ -260,7 +262,8 @@ document.getElementById("daysInWeek").addEventListener("click", function () {
         case "5": {
             daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
                 "Friday"];
-            drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 3, readDayDescs());
+            drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length -
+                (numHeaderRows + 1), readDayDescs());
             /* Get number of rows already in table, subtract three to exclude
                header rows and "Add more..." button */
             document.getElementById("customDays_more").style.display =
@@ -270,7 +273,8 @@ document.getElementById("daysInWeek").addEventListener("click", function () {
         case "7": {
             daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
                 "Friday", "Saturday", "Sunday"];
-            drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length - 3, readDayDescs());
+            drawTable(daysInWeek, inputTable, InputOrOutput.input, readClasses(), inputTable.getElementsByTagName("tr").length -
+                (numHeaderRows + 1), readDayDescs());
             document.getElementById("customDays_more").style.display =
                 "none";
             break;
@@ -384,36 +388,6 @@ document.getElementById("generate").addEventListener("click", function () {
         outputTable.innerHTML = "";
     }
 });
-/**
- * This is the event listener for the "Print" button.
- *
- * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
- */
-/*document.getElementById("print").addEventListener("click", function(): void {
-    let printWindow: Window = window.open("./index.html", "printwindow");
-    printWindow.document.write();
-    let rootEl: HTMLHtmlElement = printWindow.document.createElement("html");
-    
-    let head: HTMLHeadElement = printWindow.document.createElement("head");
-    rootEl.appendChild(head);
-    let cssLink: HTMLLinkElement = printWindow.document.createElement("link");
-    cssLink.rel = "stylesheet";
-    cssLink.type = "text/css";
-    
-    let body: HTMLBodyElement = printWindow.document.createElement("body");
-    rootEl.appendChild(body);
-    let table: HTMLTableElement = printWindow.document.createElement("table");
-    table.innerHTML = outputTable.innerHTML;
-    body.appendChild(table);
-    
-    //printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    // printWindow.close();
-    // https://stackoverflow.com/a/20101483/
-    // https://stackoverflow.com/a/6040795/
-});*/
 document.getElementById("print").addEventListener("click", function () {
     window.print();
 });
@@ -428,8 +402,8 @@ document.getElementById("print").addEventListener("click", function () {
  */
 function serialize() {
     var obj = {};
-    obj.version = "0.2.3";
-    // The Node.js build script will change "0.2.3" to the current version
+    obj.version = "0.2.4";
+    // The Node.js build script will change "0.2.4" to the current version
     obj.classes = readClasses();
     obj.daysInWeek = daysInWeek;
     obj.dayDescs = readDayDescs();
