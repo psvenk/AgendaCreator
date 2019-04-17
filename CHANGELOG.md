@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project partially adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.2.5 - ___
+
+- `[*]` Columns (and rows) are now evenly distributed when printing
+
 ## 0.2.4 - 2019-04-17
 
 - `[*]` Fixed a bug in which one extra row is added whenever "Add more..." is clicked and a number of rows to add is specified
