@@ -49,6 +49,8 @@ const DaysInWeek: any = {
 	      "Sunday"]
 };
 
+const numHeaderRows: number = 2;
+
 /**
  * Draws a table with the elements of `daysInWeek` as column headers and
  * the elements of `classes` as row headers.
@@ -188,9 +190,10 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 						let numRowsToAdd: number = parseInt(
 							prompt("How many rows would you like to add?"));
 						let numRowsExisting: number =
-							inputTable.getElementsByTagName("tr").length - 2;
-						/* Get number of rows already in table, subtract two to
-						   exclude header row and "Add more..." button */
+							inputTable.getElementsByTagName("tr").length -
+							(numHeaderRows + 1);
+						/* Get number of rows already in table, subtract to
+						   exclude header rows and "Add more..." button */
 						let totalRows: number = numRowsExisting + numRowsToAdd;
 						
 						drawTable(daysInWeek, inputTable, InputOrOutput.input,
@@ -254,7 +257,8 @@ function setCustomDays(daysRaw: string): void {
 	}
 	daysInWeek = days;
 	drawTable(daysInWeek, inputTable, InputOrOutput.input,
-	          readClasses(), inputTable.getElementsByTagName("tr").length - 3,
+	          readClasses(),
+	          inputTable.getElementsByTagName("tr").length - (numHeaderRows + 1),
 	          readDayDescs());
 	(document.getElementById("customDays") as HTMLInputElement).value =
 		daysRaw;
@@ -295,8 +299,9 @@ document.getElementById("daysInWeek").addEventListener(
 				daysInWeek = ["Monday", "Tuesday", "Wednesday", "Thursday",
 							  "Friday"];
 				drawTable(daysInWeek, inputTable, InputOrOutput.input,
-						  readClasses(),
-						  inputTable.getElementsByTagName("tr").length - 3,
+				          readClasses(),
+				          inputTable.getElementsByTagName("tr").length -
+				          (numHeaderRows + 1),
 				          readDayDescs());
 				/* Get number of rows already in table, subtract three to exclude
 				   header rows and "Add more..." button */
@@ -309,7 +314,8 @@ document.getElementById("daysInWeek").addEventListener(
 							  "Friday", "Saturday", "Sunday"];
 				drawTable(daysInWeek, inputTable, InputOrOutput.input,
 						  readClasses(),
-						  inputTable.getElementsByTagName("tr").length - 3,
+						  inputTable.getElementsByTagName("tr").length -
+				          (numHeaderRows + 1),
 				          readDayDescs());
 				document.getElementById("customDays_more").style.display =
 					"none";
@@ -443,37 +449,6 @@ document.getElementById("generate").addEventListener(
 		}
 	}
 );
-
-/**
- * This is the event listener for the "Print" button.
- * 
- * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
- */
-/*document.getElementById("print").addEventListener("click", function(): void {
-	let printWindow: Window = window.open("./index.html", "printwindow");
-	printWindow.document.write();
-	let rootEl: HTMLHtmlElement = printWindow.document.createElement("html");
-	
-	let head: HTMLHeadElement = printWindow.document.createElement("head");
-	rootEl.appendChild(head);
-	let cssLink: HTMLLinkElement = printWindow.document.createElement("link");
-	cssLink.rel = "stylesheet";
-	cssLink.type = "text/css";
-	
-	let body: HTMLBodyElement = printWindow.document.createElement("body");
-	rootEl.appendChild(body);
-	let table: HTMLTableElement = printWindow.document.createElement("table");
-	table.innerHTML = outputTable.innerHTML;
-	body.appendChild(table);
-	
-	//printWindow.document.close();
-	printWindow.focus();
-	printWindow.print();
-	// printWindow.close();
-	// https://stackoverflow.com/a/20101483/
-	// https://stackoverflow.com/a/6040795/
-});*/
 
 document.getElementById("print").addEventListener("click", function(): void {
 	window.print();
