@@ -429,6 +429,27 @@ function trimArray(arr: string[]): string[] {
 }
 
 /**
+ * This function compares two string arrays. This function could be used
+ * to perform a shallow comparison of any two arrays, but I only need to compare
+ * string arrays (for now) in AgendaCreator.
+ * 
+ * @param {string[]} arr1: The first array to compare
+ * @param {string[]} arr2: The second array to compare
+ * 
+ * @return true if equal, false if not equal
+ * 
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+function arrayEquals (arr1: string[], arr2: string[]): boolean {
+	if (arr1.length !== arr2.length) return false;
+	for (let i: number = 0; i < arr1.length; i++) {
+		if (arr1[i] !== arr2[i]) return false;
+	}
+	return true;
+}
+
+/**
  * This is the event listener for the "Generate output" button.
  * 
  * @author psvenk
@@ -489,13 +510,11 @@ function deserialize(JsonInput: string): void {
 	daysInWeek = obj.daysInWeek;
 	drawTable(daysInWeek, inputTable, InputOrOutput.input, obj.classes,
 	          obj.classes.length, obj.dayDescs);
-	if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
-	                        "Friday"]) {
+	if (arrayEquals(obj.daysInWeek, DaysInWeek["5"])) {
 		(document.getElementById("daysInWeek") as HTMLInputElement).value = "5";
 		document.getElementById("customDays_more").style.display = "none";
 	}
-	else if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
-	                             "Friday", "Saturday", "Sunday"]) {
+	else if (arrayEquals(obj.daysInWeek, DaysInWeek["7"])) {
 		(document.getElementById("daysInWeek") as HTMLInputElement).value = "7";
 		document.getElementById("customDays_more").style.display = "none";
 	}
