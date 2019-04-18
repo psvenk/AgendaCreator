@@ -40,6 +40,7 @@ body * {
 	left: 0;
 	width: 100%;
 	height: 90%;
+	table-layout: fixed;
 }
 
 #outputTable tr {display: table-row;}

@@ -402,8 +402,8 @@ document.getElementById("print").addEventListener("click", function () {
  */
 function serialize() {
     var obj = {};
-    obj.version = "0.2.4";
-    // The Node.js build script will change "0.2.4" to the current version
+    obj.version = "0.2.5";
+    // The Node.js build script will change "0.2.5" to the current version
     obj.classes = readClasses();
     obj.daysInWeek = daysInWeek;
     obj.dayDescs = readDayDescs();
