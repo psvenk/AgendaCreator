@@ -1,6 +1,6 @@
 {
 	"name": "agendacreator",
-	"version": "0.2.6",
+	"version": "0.3.0-1",
 	"description": "None yet",
 	"homepage": "https://github.com/psvenk/AgendaCreator",
 	"private": true,
@@ -23,5 +23,5 @@
 		"url": "https://github.com/psvenk/AgendaCreator.git"
 	},
 	"author": "psvenk <45520974+psvenk@users.noreply.github.com>",
-	"license": "Apache-2.0+ OR MPL-2.0+"
+	"license": "MPL-2.0+"
 }

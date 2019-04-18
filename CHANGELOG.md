@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project partially adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.3.0 - ____
+
+- `[*]` Dropped Apache License -- AgendaCreator is now protected by the MPL 2.0 copyleft
+
 ## 0.2.6 - 2019-04-18
 
 - `[*]` When importing a JSON file with either the "5-day week" or the "7-day week" preset, the correct preset is selected instead of "Custom"

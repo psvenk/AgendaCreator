@@ -1,16 +1,15 @@
 /*
-  Copyright 2019 psvenk
-  This file is part of AgendaCreator.
+Copyright 2019 psvenk
+This file is part of AgendaCreator.
 
-  AgendaCreator is free/libre and open-source software: you can redistribute it
-  and/or modify it under the terms of the Apache License, Version 2.0 or any
-  later version, or the Mozilla Public License, Version 2.0 or any later version.
-  See file `COPYING` for more details.
+AgendaCreator is free/libre and open-source software: you can redistribute it
+and/or modify it under the terms of the Mozilla Public License, Version 2.0 or
+any later version. See file `COPYING` for more details.
 
-  Unless otherwise specified, all parts of this file carry the same license as
-  the license for the entire file.
+Unless otherwise specified, all parts of this file carry the same license as
+the license for the entire file.
 
-  SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
+SPDX-License-Identifier: MPL-2.0+
 */
 
 "use strict";
@@ -78,7 +77,7 @@ const numHeaderRows: number = 2;
  * 		data are added
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ * @license Apache-2.0+ OR MPL-2.0+
  */
 function drawTable(daysInWeek: string[], table: HTMLTableElement,
 				   inputOrOutput: boolean, classes: string[] = [],
@@ -231,7 +230,7 @@ HTMLTableElement;
  * @param {string} daysRaw: The comma-delimited list to parse
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ * @license Apache-2.0+ OR MPL-2.0+
  */
 function setCustomDays(daysRaw: string): void {
 	var days: string[] = daysRaw.match(/(\\.|[^,])+/g);
@@ -349,7 +348,7 @@ document.getElementById("setCustomDays").addEventListener(
  * 		fields
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ * @license Apache-2.0+ OR MPL-2.0+
  */
 function readClasses(): string[] {
 	var classes: string[] = new Array();
@@ -414,7 +413,7 @@ function cloneArray(arr: any[]): any[] {
  * @return {string[]} The modified array
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ * @license Apache-2.0+ OR MPL-2.0+
  */
 function trimArray(arr: string[]): string[] {
 	for (let i = 0; i < arr.length; i++) {
