@@ -373,6 +373,28 @@ function trimArray(arr) {
     return arr;
 }
 /**
+ * This function compares two string arrays. This function could be used
+ * to perform a shallow comparison of any two arrays, but I only need to compare
+ * string arrays (for now) in AgendaCreator.
+ *
+ * @param {string[]} arr1: The first array to compare
+ * @param {string[]} arr2: The second array to compare
+ *
+ * @return true if equal, false if not equal
+ *
+ * @author psvenk
+ * @license Apache-2.0+ OR MPL-2.0+
+ */
+function arrayEquals(arr1, arr2) {
+    if (arr1.length !== arr2.length)
+        return false;
+    for (var i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i])
+            return false;
+    }
+    return true;
+}
+/**
  * This is the event listener for the "Generate output" button.
  *
  * @author psvenk
@@ -402,8 +424,8 @@ document.getElementById("print").addEventListener("click", function () {
  */
 function serialize() {
     var obj = {};
-    obj.version = "0.2.5";
-    // The Node.js build script will change "0.2.5" to the current version
+    obj.version = "0.2.6-1";
+    // The Node.js build script will change "0.2.6-1" to the current version
     obj.classes = readClasses();
     obj.daysInWeek = daysInWeek;
     obj.dayDescs = readDayDescs();
@@ -424,13 +446,11 @@ function deserialize(JsonInput) {
     var obj = JSON.parse(JsonInput);
     daysInWeek = obj.daysInWeek;
     drawTable(daysInWeek, inputTable, InputOrOutput.input, obj.classes, obj.classes.length, obj.dayDescs);
-    if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
-        "Friday"]) {
+    if (arrayEquals(obj.daysInWeek, DaysInWeek["5"])) {
         document.getElementById("daysInWeek").value = "5";
         document.getElementById("customDays_more").style.display = "none";
     }
-    else if (obj.daysInWeek === ["Monday", "Tuesday", "Wednesday", "Thursday",
-        "Friday", "Saturday", "Sunday"]) {
+    else if (arrayEquals(obj.daysInWeek, DaysInWeek["7"])) {
         document.getElementById("daysInWeek").value = "7";
         document.getElementById("customDays_more").style.display = "none";
     }
