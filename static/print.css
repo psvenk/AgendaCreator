@@ -54,6 +54,10 @@ table, th, td {
 	border-collapse: collapse;
 }
 
+#enableDates_more {
+	display: none !important;
+}
+
 @page {
 	size: landscape;
 }

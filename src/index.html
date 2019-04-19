@@ -18,6 +18,8 @@ SPDX-License-Identifier: MPL-2.0+
 		<link rel="stylesheet" type="text/css" href="style.css" />
 		<link rel="stylesheet" type="text/css" href="print.css" media="print" />
 		<script type="text/javascript" src="lib/FileSaver.min.js"></script>
+		<script type="text/javascript"
+		        src="lib/nodep-date-input-polyfill.dist.js"></script>
 	</head>
 	<body>
 		<h1>
@@ -33,6 +35,12 @@ SPDX-License-Identifier: MPL-2.0+
 			<input id="customDays" />
 			<input type="button" id="setCustomDays" value="Set" />
 		</div>
+		<label for="enableDates">
+			<input type="checkbox" id="enableDates" /> Enable dates
+		</label>
+		<span id="enableDates_more" style="display:none">
+			(Week of: <input type="date" id="datePicker" />)
+		</span>
 		<br /><br />
 		<table id="inputTable">
 			<tr class="header">
