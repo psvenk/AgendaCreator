@@ -1,19 +1,23 @@
 /*
-  Copyright 2019 psvenk
-  This file is part of AgendaCreator.
+Copyright 2019 psvenk
+This file is part of AgendaCreator.
 
-  AgendaCreator is free/libre and open-source software: you can redistribute it
-  and/or modify it under the terms of the Apache License, Version 2.0 or any
-  later version, or the Mozilla Public License, Version 2.0 or any later version.
-  See file `COPYING` for more details.
+AgendaCreator is free/libre and open-source software: you can redistribute it
+and/or modify it under the terms of the Mozilla Public License, Version 2.0 or
+any later version. See file `COPYING` for more details.
 
-  Unless otherwise specified, all parts of this file carry the same license as
-  the license for the entire file.
+Unless otherwise specified, all parts of this file carry the same license as
+the license for the entire file.
 
-  SPDX-License-Identifier: Apache-2.0+ OR MPL-2.0+
+SPDX-License-Identifier: MPL-2.0+
 */
 
 "use strict";
+
+interface Date {
+	addDays(days: number): Date;
+	getMonthString(): string;
+}
 
 /**
  * Converts a string with HTML entities to a string with Unicode characters.
@@ -30,15 +34,48 @@
  * that this code is under this license. I believe that the inclusion of this
  * short snippet does not make AgendaCreator a derivative work of this snippet
  * of code, so I feel that I am within my legal rights to include this
- * CC-BY-SA-licensed snippet in my Apache- and MPL-licensed code. However, if
- * you take this code, modify it to make it something more than a short snippet,
- * and use it in your own project, it will carry the CC-BY-SA 3.0 license as it
- * will be a derivative work of this code snippet.
+ * CC-BY-SA-licensed snippet in my MPL-licensed code. However, if you take this
+ * code, modify it to make it something more than a short snippet, and use it in
+ * your own project, it will carry the CC-BY-SA 3.0 license as it will be a
+ * derivative work of this code snippet.
  */
 function decodeEntities(encodedString: string): string {
 	var textArea: HTMLTextAreaElement = document.createElement('textarea');
 	textArea.innerHTML = encodedString;
 	return textArea.value;
+}
+// TODO: include CC-BY-SA 3.0 in `licenses` folder
+
+/**
+ * Returns a Date object from an ISO date string (no time).
+ * See <https://stackoverflow.com/a/23641753>.
+ * 
+ * @author psvenk
+ * @license MPL-2.0+
+ */
+function parseDate(dateString: string): Date {
+	let parts: string[] = dateString.split(/\D/);
+	if (parts.length !== 3) return undefined;
+	return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1,
+	                parseInt(parts[2]));
+}
+
+/**
+ * Adds a set number of days to a Date, and returns the modified Date object.
+ * This method does not modify the original Date object.
+ * 
+ * @param {number} days: The number of days to add
+ * 
+ * @author Anthony W. Jones at <https://stackoverflow.com/a/563442>
+ * 		modified slightly by psvenk to include TypeScript type annotations
+ * @license CC-BY-SA-3.0
+ * 
+ * The license note for decodeEntities() applies to this function too.
+ */
+Date.prototype.addDays = function(days: number): Date {
+	let date: Date = new Date(this.valueOf());
+	date.setDate(date.getDate() + days);
+	return date;
 }
 
 const InputOrOutput: any = {"input": true, "output": false};
@@ -46,8 +83,13 @@ const InputOrOutput: any = {"input": true, "output": false};
 const DaysInWeek: any = {
 	"5": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
 	"7": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
-	      "Sunday"]
+	      "Sunday"],
+	"7-js-order": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+	               "Friday", "Saturday", "Sunday"]
 };
+/* 7-js-order starts from Sunday because that is the order used by
+ * Date.prototype.getDay(). See <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getDay>.
+ */
 
 const numHeaderRows: number = 2;
 
@@ -78,7 +120,7 @@ const numHeaderRows: number = 2;
  * 		data are added
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ * @license MPL-2.0+
  */
 function drawTable(daysInWeek: string[], table: HTMLTableElement,
 				   inputOrOutput: boolean, classes: string[] = [],
@@ -95,7 +137,7 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 	// Add a blank cell to the leftmost position
 	
 	for (let col: number = 1; col <= daysInWeek.length; col++) (function() {
-		var currentTh: HTMLTableHeaderCellElement =
+		let currentTh: HTMLTableHeaderCellElement =
 			document.createElement("th");
 		currentTh.textContent = daysInWeek[col - 1];
 		headerRow.appendChild(currentTh);
@@ -104,6 +146,53 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 	
 	(function(): void {
 		if (inputOrOutput == InputOrOutput.output) {
+			let date: Date = parseDate(
+				(document.getElementById("datePicker") as HTMLInputElement).value
+			);
+			if (typeof date != "undefined") {
+				let headerRow2: HTMLTableRowElement =
+					document.createElement("tr");
+				headerRow2.className += " header";
+				table.appendChild(headerRow2);
+				headerRow2.appendChild(document.createElement("td"));
+				// Add a blank cell to the leftmost position
+
+				if (arrayEquals(daysInWeek, DaysInWeek["5"]) ||
+				    arrayEquals(daysInWeek, DaysInWeek["7"])) {
+					let dateDay = DaysInWeek["7-js-order"][date.getDay()];
+					/* String representation of the day of the week selected
+					 * in the date picker
+					 */
+					let dayIndex = DaysInWeek["7"].indexOf(dateDay);
+					if (dayIndex > 0) {
+						if (dayIndex <= 4) { // i.e. Tue - Fri
+							date = date.addDays(-dayIndex);
+						}
+						if (dayIndex > 4) { // i.e. Sat, Sun
+							date = date.addDays(7 - dayIndex)
+						}
+					}
+					// Leave it alone if it is Monday (0)
+					// If dayIndex < 0, something is seriously wrong here
+				}
+				/* Automatically adjust start day to a Monday if one of the
+				 * presets is selected
+				 */
+				
+				for (let i: number = 0; i < daysInWeek.length; i++) {
+					headerRow2.appendChild(document.createElement("th")).
+						textContent += date.addDays(i).toLocaleDateString(
+							"en-US", {
+								"month": "short",
+								"day": "numeric"
+							}
+						);
+				}
+				/* TODO: include `date` when exporting JSON and move this logic
+				 * to a helper method (to make importing easier)
+				 */
+			}
+			
 			if (typeof dayDescs != "undefined" &&
 			    trimArray(cloneArray(dayDescs)).length > 0) {
 				let headerRow2: HTMLTableRowElement =
@@ -113,12 +202,12 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 				headerRow2.appendChild(document.createElement("td"));
 				// Add a blank cell to the leftmost position
 				
-				for (let col: number = 1; col <= daysInWeek.length; col++) {
+				for (let i: number = 0; i < daysInWeek.length; i++) {
 					headerRow2.appendChild(document.createElement("th")).
-						textContent = dayDescs[col - 1];
+						textContent = dayDescs[i];
 				}
 			}
-
+			
 			for (let row: number = 1; row <= classes.length; row++) {
 				let tr: HTMLTableRowElement = document.createElement("tr");
 				table.appendChild(tr);
@@ -231,7 +320,7 @@ HTMLTableElement;
  * @param {string} daysRaw: The comma-delimited list to parse
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 function setCustomDays(daysRaw: string): void {
 	var days: string[] = daysRaw.match(/(\\.|[^,])+/g);
@@ -274,7 +363,7 @@ function setCustomDays(daysRaw: string): void {
  * 		variable `daysInWeek` is used.
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 function getCustomDays(days ?: string[]): string {
 	if (typeof days == "undefined" || days.length == 0) days = daysInWeek;
@@ -290,7 +379,7 @@ function getCustomDays(days ?: string[]): string {
  * This is the event listener for the dropdown to choose the days in the week.
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 document.getElementById("daysInWeek").addEventListener(
 	"click", function(): void {
@@ -342,6 +431,19 @@ document.getElementById("setCustomDays").addEventListener(
 );
 
 /**
+ * This is the event listener for the "Enable dates" checkbox.
+ * 
+ * @author psvenk
+ * @license MPL-2.0+
+ */
+document.getElementById("enableDates").addEventListener(
+	"click", function(): void {
+		document.getElementById("enableDates_more").style.display =
+			(this as HTMLInputElement).checked ? "inline" : "none";
+	}
+);
+
+/**
  * Reads the names of classes entered into the <input> fields in the input
  * table, and returns them in an array.
  * 
@@ -349,7 +451,7 @@ document.getElementById("setCustomDays").addEventListener(
  * 		fields
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 function readClasses(): string[] {
 	var classes: string[] = new Array();
@@ -374,7 +476,7 @@ function readClasses(): string[] {
  * 		fields
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 function readDayDescs(): string[] {
 	var dayDescs: string[] = new Array();
@@ -394,7 +496,7 @@ function readDayDescs(): string[] {
  * @return {any[]} A clone of `arr`
  * 
  * @author psvenk
- * @license CC0-1.0 OR Apache-2.0+ OR MPL-2.0+
+ * @license CC0-1.0 OR MPL-2.0+ OR Apache-2.0+
  */
 function cloneArray(arr: any[]): any[] {
 	var len: number = arr.length;
@@ -414,7 +516,7 @@ function cloneArray(arr: any[]): any[] {
  * @return {string[]} The modified array
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+ OR MIT
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 function trimArray(arr: string[]): string[] {
 	for (let i = 0; i < arr.length; i++) {
@@ -439,7 +541,7 @@ function trimArray(arr: string[]): string[] {
  * @return true if equal, false if not equal
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 function arrayEquals (arr1: string[], arr2: string[]): boolean {
 	if (arr1.length !== arr2.length) return false;
@@ -453,7 +555,7 @@ function arrayEquals (arr1: string[], arr2: string[]): boolean {
  * This is the event listener for the "Generate output" button.
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 document.getElementById("generate").addEventListener(
 	"click", function(): void {
@@ -482,7 +584,7 @@ document.getElementById("print").addEventListener("click", function(): void {
  * @return {string} The serialized JSON string
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 function serialize(): string {
 	var obj: any = {};
@@ -503,7 +605,7 @@ function serialize(): string {
  * @param {string} JsonInput: The string to read from
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 function deserialize(JsonInput: string): void {
 	var obj: any = JSON.parse(JsonInput);
@@ -532,7 +634,7 @@ function deserialize(JsonInput: string): void {
  * This is the event listener for the "Export JSON" button.
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 document.getElementById("export").addEventListener(
 	"click", function(): void {
@@ -549,7 +651,7 @@ document.getElementById("export").addEventListener(
  * "Export JSON" is clicked).
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 document.getElementById("export_download").addEventListener(
 	"click", function(): void {
@@ -563,7 +665,7 @@ document.getElementById("export_download").addEventListener(
  * This is the event listener for the "Import JSON" button.
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 document.getElementById("import").addEventListener(
 	"click", function(): void {
@@ -578,7 +680,7 @@ document.getElementById("import").addEventListener(
  * visible after "Import JSON" is clicked.
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 document.getElementById("import_submit").addEventListener(
 	"click", function(): void {
@@ -592,7 +694,7 @@ document.getElementById("import_submit").addEventListener(
  * "Import JSON" is clicked).
  * 
  * @author psvenk
- * @license Apache-2.0+ OR MPL-2.0+
+ * @license MPL-2.0+ OR Apache-2.0+
  */
 document.getElementById("import_upload").addEventListener(
 	"click", function(): void {

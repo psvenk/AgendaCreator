@@ -1,6 +1,6 @@
 {
 	"name": "agendacreator",
-	"version": "0.2.6",
+	"version": "0.3.0-3",
 	"description": "None yet",
 	"homepage": "https://github.com/psvenk/AgendaCreator",
 	"private": true,
@@ -16,6 +16,7 @@
 	"dependencies": {
 		"@types/file-saver": "^2.0.0",
 		"file-saver": "^2.0.1",
+		"nodep-date-input-polyfill": "^5.2.0",
 		"typescript": "^3.4.2"
 	},
 	"repository": {
@@ -23,5 +24,5 @@
 		"url": "https://github.com/psvenk/AgendaCreator.git"
 	},
 	"author": "psvenk <45520974+psvenk@users.noreply.github.com>",
-	"license": "Apache-2.0+ OR MPL-2.0+"
+	"license": "MPL-2.0+"
 }
