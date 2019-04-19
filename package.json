@@ -1,7 +1,7 @@
 {
 	"name": "agendacreator",
-	"version": "0.3.0-5",
-	"description": "None yet",
+	"version": "0.3.0-6",
+	"description": "A HTML+JS tool for students to keep track of their classes",
 	"homepage": "https://github.com/psvenk/AgendaCreator",
 	"private": true,
 	"scripts": {

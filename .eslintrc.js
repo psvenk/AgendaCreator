@@ -6,6 +6,7 @@ module.exports = {
 	},
 	"settings": {
 		"polyfills": [
+			"JSON",
 			"Blob",
 			"FileReader"
 			/* People on old browsers can use the textarea, I don't think it's
