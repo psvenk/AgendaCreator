@@ -1,6 +1,6 @@
 {
 	"name": "agendacreator",
-	"version": "0.3.0-4",
+	"version": "0.3.0-5",
 	"description": "None yet",
 	"homepage": "https://github.com/psvenk/AgendaCreator",
 	"private": true,
@@ -22,6 +22,7 @@
 		"eslint": "^5.16.0",
 		"eslint-plugin-compat": "^3.1.1",
 		"file-saver": "^2.0.1",
+		"json3": "^3.3.2",
 		"typescript": "^3.4.2"
 	},
 	"browserslist": [

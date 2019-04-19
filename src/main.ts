@@ -704,6 +704,6 @@ document.getElementById("import_upload").addEventListener(
 		reader.readAsText(file);
 		reader.addEventListener("load", function(): void {
 			deserialize(reader.result as string);
-		});
+		}, false);
 	}, false
 );
