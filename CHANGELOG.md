@@ -8,6 +8,7 @@ and this project partially adheres to [Semantic Versioning](https://semver.org/s
 
 - `[+]` Added support for including dates in generated agenda
 - `[+]` Improved documentation
+- `[+]` Improved browser compatibility
 - `[*]` Dropped Apache License -- AgendaCreator is now protected by the MPL 2.0 copyleft
 
 ## 0.2.6 - 2019-04-18

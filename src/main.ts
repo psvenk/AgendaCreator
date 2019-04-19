@@ -287,7 +287,7 @@ function drawTable(daysInWeek: string[], table: HTMLTableElement,
 						
 						drawTable(daysInWeek, inputTable, InputOrOutput.input,
 								  readClasses(), totalRows, readDayDescs());
-					});
+					}, false);
 					// Add event listener for "Add more..." button
 				}
 				
@@ -420,14 +420,14 @@ document.getElementById("daysInWeek").addEventListener(
 				break;
 			}
 		}
-	}
+	}, false
 );
 
 document.getElementById("setCustomDays").addEventListener(
 	"click", function(): void {
 		setCustomDays((document.getElementById("customDays") as
 		               HTMLInputElement).value);
-	}
+	}, false
 );
 
 /**
@@ -440,7 +440,7 @@ document.getElementById("enableDates").addEventListener(
 	"click", function(): void {
 		document.getElementById("enableDates_more").style.display =
 			(this as HTMLInputElement).checked ? "inline" : "none";
-	}
+	}, false
 );
 
 /**
@@ -570,12 +570,12 @@ document.getElementById("generate").addEventListener(
 		else {
 			outputTable.innerHTML = "";
 		}
-	}
+	}, false
 );
 
 document.getElementById("print").addEventListener("click", function(): void {
 	window.print();
-});
+}, false);
 
 /**
  * This method stores in a JSON string the data that the user entered into
@@ -643,7 +643,7 @@ document.getElementById("export").addEventListener(
 			export_more.style.display == "none" ? "block" : "none";
 		(document.getElementById("export_output") as HTMLTextAreaElement).value =
 			serialize();
-	}
+	}, false
 );
 
 /**
@@ -658,7 +658,7 @@ document.getElementById("export_download").addEventListener(
 		var blob = new Blob([serialize()],
 							{type: "application/json;charset=utf-8"});
 		saveAs(blob, "agenda.json");
-	}
+	}, false
 );
 
 /**
@@ -672,7 +672,7 @@ document.getElementById("import").addEventListener(
 		var import_more: HTMLElement = document.getElementById("import_more");
 		import_more.style.display =
 			import_more.style.display == "none" ? "inline" : "none";
-	}
+	}, false
 );
 
 /**
@@ -686,7 +686,7 @@ document.getElementById("import_submit").addEventListener(
 	"click", function(): void {
 		deserialize((document.getElementById("import_input") as
 		             HTMLTextAreaElement).value);
-	}
+	}, false
 );
 
 /**
@@ -705,5 +705,5 @@ document.getElementById("import_upload").addEventListener(
 		reader.addEventListener("load", function(): void {
 			deserialize(reader.result as string);
 		});
-	}
+	}, false
 );

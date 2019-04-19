@@ -1,0 +1,10 @@
+{
+	"rulesDirectory": ["node_modules/tslint-microsoft-contrib"],
+	"rules": {
+		"no-unsupported-browser-code": [
+			true, [
+				"Chrome >= 70"
+			]
+		]
+	}
+}

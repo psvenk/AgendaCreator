@@ -1,11 +1,12 @@
 {
 	"name": "agendacreator",
-	"version": "0.3.0-3",
+	"version": "0.3.0-4",
 	"description": "None yet",
 	"homepage": "https://github.com/psvenk/AgendaCreator",
 	"private": true,
 	"scripts": {
-		"build": "npm run build:tsc && npm run build:copy-html && npm run build:insert-version && npm run build:copy-static",
+		"build": "npm run build:eslint && npm run build:tsc && npm run build:copy-html && npm run build:insert-version && npm run build:copy-static",
+		"build:eslint": "eslint src/main.ts",
 		"build:tsc": "tsc",
 		"build:copy-html": "cp src/index.html dist/index.html",
 		"build:insert-version": "sed -i \"s/VERSION/$npm_package_version/g\" 'dist/index.html' 'dist/main.js'",
@@ -15,10 +16,19 @@
 	},
 	"dependencies": {
 		"@types/file-saver": "^2.0.0",
+		"@typescript-eslint/parser": "^1.6.0",
+		"blob-polyfill": "^3.0.20180112",
+		"browserslist": "^4.5.5",
+		"eslint": "^5.16.0",
+		"eslint-plugin-compat": "^3.1.1",
 		"file-saver": "^2.0.1",
-		"nodep-date-input-polyfill": "^5.2.0",
 		"typescript": "^3.4.2"
 	},
+	"browserslist": [
+		"since 2010",
+		"cover 96% in US",
+		"IE >= 9"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/psvenk/AgendaCreator.git"
