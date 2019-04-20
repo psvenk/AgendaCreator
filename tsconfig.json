@@ -1,12 +1,12 @@
 {
 	"compilerOptions": {
 		"target": "es3",
-		"rootDir": "src/",
-		"outDir": "dist/",
+		"outFile": "dist/script.js",
 		"noImplicitAny": true,
 		"noImplicitThis": true
 	},
 	"files": [
+		"src/helper.ts",
 		"src/main.ts"
 	]
 }

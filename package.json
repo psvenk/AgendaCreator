@@ -1,12 +1,12 @@
 {
 	"name": "agendacreator",
-	"version": "0.3.0-6",
+	"version": "0.3.0-7",
 	"description": "A HTML+JS tool for students to keep track of their classes",
 	"homepage": "https://github.com/psvenk/AgendaCreator",
 	"private": true,
 	"scripts": {
 		"build": "npm run build:eslint && npm run build:tsc && npm run build:copy-html && npm run build:insert-version && npm run build:copy-static",
-		"build:eslint": "eslint src/main.ts",
+		"build:eslint": "eslint src/*.ts",
 		"build:tsc": "tsc",
 		"build:copy-html": "cp src/index.html dist/index.html",
 		"build:insert-version": "sed -i \"s/VERSION/$npm_package_version/g\" 'dist/index.html' 'dist/main.js'",
