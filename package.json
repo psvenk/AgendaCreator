@@ -1,6 +1,6 @@
 {
 	"name": "agendacreator",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "A HTML+JS tool for students to keep track of their classes",
 	"homepage": "https://github.com/psvenk/AgendaCreator",
 	"private": true,
@@ -9,7 +9,7 @@
 		"build:eslint": "eslint src/*.ts",
 		"build:tsc": "tsc",
 		"build:copy-html": "cp src/index.html dist/index.html",
-		"build:insert-version": "sed -i \"s/VERSION/$npm_package_version/g\" 'dist/index.html' 'dist/main.js'",
+		"build:insert-version": "sed -i \"s/VERSION/$npm_package_version/g\" 'dist/index.html' 'dist/script.js'",
 		"build:copy-static": "cp -rLT static dist",
 		"gh-pages": "rm -rf dist; mkdir dist; git clone -b gh-pages git@github.com:psvenk/AgendaCreator.git dist; rm -rf dist/*; npm run build; cd dist; git add *; git add -u *; git commit -m 'Updated the GitHub Pages site'; git push origin gh-pages; cd ..; rm -rf dist",
 		"____gh-pages-comment": "This is taken from the package.json for LearnASM by KB1RD, which can be found at <https://github.com/KB1RD/LearnASM/blob/master/package.json>."
